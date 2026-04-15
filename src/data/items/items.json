@@ -1,0 +1,74 @@
+[
+  {
+    "id": "monomate",
+    "name": "Monomate",
+    "description": "Restores 50 HP to one ally.",
+    "type": "consumable",
+    "effect": { "type": "heal_hp", "value": 50, "target": "single" },
+    "price": 50
+  },
+  {
+    "id": "dimate",
+    "name": "Dimate",
+    "description": "Restores 120 HP to one ally.",
+    "type": "consumable",
+    "effect": { "type": "heal_hp", "value": 120, "target": "single" },
+    "price": 120
+  },
+  {
+    "id": "trimate",
+    "name": "Trimate",
+    "description": "Fully restores HP to one ally.",
+    "type": "consumable",
+    "effect": { "type": "heal_hp", "value": 999, "target": "single" },
+    "price": 350
+  },
+  {
+    "id": "moon_atomizer",
+    "name": "Moon Atomizer",
+    "description": "Revives a fallen ally with 30% HP.",
+    "type": "consumable",
+    "effect": { "type": "cure_status", "value": 30, "target": "single" },
+    "price": 300
+  },
+  {
+    "id": "antidote",
+    "name": "Antidote",
+    "description": "Cures poison.",
+    "type": "consumable",
+    "effect": { "type": "cure_status", "value": 0, "target": "single" },
+    "price": 30
+  },
+  {
+    "id": "photon_blade",
+    "name": "Photon Blade",
+    "description": "A blade of concentrated photon energy.",
+    "type": "weapon",
+    "stats": { "attack": 8 },
+    "price": 500
+  },
+  {
+    "id": "force_staff",
+    "name": "Force Staff",
+    "description": "Channels technique energy efficiently.",
+    "type": "weapon",
+    "stats": { "attack": 4 },
+    "price": 350
+  },
+  {
+    "id": "leather_vest",
+    "name": "Leather Vest",
+    "description": "Basic protective gear.",
+    "type": "armor",
+    "stats": { "defense": 5 },
+    "price": 200
+  },
+  {
+    "id": "barrier_shield",
+    "name": "Barrier Shield",
+    "description": "A portable energy deflector.",
+    "type": "shield",
+    "stats": { "defense": 4 },
+    "price": 250
+  }
+]

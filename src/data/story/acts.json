@@ -1,0 +1,26 @@
+{
+  "title": "Starfall Chronicles",
+  "acts": [
+    {
+      "id": "act1",
+      "name": "Echoes of the Fallen Star",
+      "summary": "Kael and Lyra discover ARIEL in the crash site outside Crestfall and learn of the Stellar Archive — the last hope against the Bane.",
+      "locations": ["Crestfall Village", "Crash Site", "Dezolis Wilds"],
+      "status": "demo"
+    },
+    {
+      "id": "act2",
+      "name": "The Void Between Worlds",
+      "summary": "The party seeks a ship to cross the void to Motavia, navigating dangers of the dying planet.",
+      "locations": ["Dezolis Spaceport", "The Void", "Motavia Desert"],
+      "status": "planned"
+    },
+    {
+      "id": "act3",
+      "name": "Light of the Archive",
+      "summary": "Deep in Motavia's ruins, the party uncovers the truth about the Bane — and the terrible price of stopping it.",
+      "locations": ["Motavia Desert", "Stellar Archive", "Bane Rift"],
+      "status": "planned"
+    }
+  ]
+}

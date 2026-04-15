@@ -1,0 +1,61 @@
+[
+  {
+    "id": "scene_start",
+    "lines": [
+      { "speaker": "", "text": "Year 1157 POST-COLLAPSE. Planet Dezolis, outer rim.", "emotion": "narration" },
+      { "speaker": "", "text": "The Bane devours the stars one by one. Tonight... one fell to earth.", "emotion": "narration" }
+    ],
+    "next": "kael_lyra_01"
+  },
+  {
+    "id": "kael_lyra_01",
+    "lines": [
+      { "speaker": "Lyra", "text": "Look at it, Kael. A starship — from before the Collapse. It's incredible.", "portrait": "lyra", "emotion": "wonder" },
+      { "speaker": "Kael", "text": "It's Shadowbeast territory is what it is. We shouldn't linger.", "portrait": "kael", "emotion": "cautious" },
+      { "speaker": "Lyra", "text": "There — the stasis pod! Something's still powered inside. We have to look!", "portrait": "lyra", "emotion": "excited" }
+    ],
+    "next": "ariel_awakens"
+  },
+  {
+    "id": "ariel_awakens",
+    "lines": [
+      { "speaker": "ARIEL", "text": "...Temporal displacement confirmed. 412-year gap. Unit ARIEL-7 online. Scanning environment.", "portrait": "ariel", "emotion": "neutral" },
+      { "speaker": "Kael", "text": "It's... a CAST android. From the old world.", "portrait": "kael", "emotion": "surprised" },
+      { "speaker": "ARIEL", "text": "You are the first biologicals I've encountered since the Collapse. The Bane must be stopped. I carry coordinates to the Stellar Archive — pre-Collapse data that holds the weapon to end this darkness.", "portrait": "ariel", "emotion": "urgent" },
+      { "speaker": "Lyra", "text": "Then we get you out of here. Right now!", "portrait": "lyra", "emotion": "determined" }
+    ],
+    "next": "battle_trigger"
+  },
+  {
+    "id": "battle_trigger",
+    "lines": [
+      { "speaker": "Kael", "text": "...", "portrait": "kael", "emotion": "alert" },
+      { "speaker": "Kael", "text": "Shadowbeasts. Pack of them, closing fast. Get ready!", "portrait": "kael", "emotion": "battle" }
+    ],
+    "choices": [
+      { "text": "ENGAGE!", "next": "end" }
+    ]
+  },
+  {
+    "id": "post_battle_01",
+    "lines": [
+      { "speaker": "Kael", "text": "...That's the last of them. For now.", "portrait": "kael", "emotion": "weary" },
+      { "speaker": "ARIEL", "text": "The Stellar Archive is on Motavia. Across the void. The Bane has not yet reached it.", "portrait": "ariel", "emotion": "neutral" },
+      { "speaker": "Lyra", "text": "Then we need a ship. And a way off this dying world.", "portrait": "lyra", "emotion": "hopeful" },
+      { "speaker": "Kael", "text": "We find one. Together.", "portrait": "kael", "emotion": "determined" }
+    ],
+    "next": "tobe_continued"
+  },
+  {
+    "id": "tobe_continued",
+    "lines": [
+      { "speaker": "", "text": "Their journey has only begun...", "emotion": "narration" },
+      { "speaker": "", "text": "~ TO BE CONTINUED ~", "emotion": "title" }
+    ],
+    "next": "end"
+  },
+  {
+    "id": "end",
+    "lines": []
+  }
+]

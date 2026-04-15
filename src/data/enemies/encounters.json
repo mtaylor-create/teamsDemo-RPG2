@@ -1,0 +1,48 @@
+{
+  "enemies": {
+    "shadowpup": {
+      "id": "shadowpup",
+      "name": "Shadowpup",
+      "hp": 18,
+      "attack": 8,
+      "defense": 4,
+      "speed": 12,
+      "exp": 12,
+      "meseta": 5,
+      "techniques": [],
+      "weaknesses": ["FOI"],
+      "sprite": "shadowpup"
+    },
+    "shadowhound": {
+      "id": "shadowhound",
+      "name": "Shadowhound",
+      "hp": 35,
+      "attack": 13,
+      "defense": 7,
+      "speed": 8,
+      "exp": 28,
+      "meseta": 14,
+      "techniques": [],
+      "weaknesses": ["FOI"],
+      "sprite": "shadowhound"
+    },
+    "shadowwarden": {
+      "id": "shadowwarden",
+      "name": "Shadowwarden",
+      "hp": 80,
+      "attack": 18,
+      "defense": 10,
+      "speed": 6,
+      "exp": 120,
+      "meseta": 60,
+      "techniques": ["DARK_BOLT"],
+      "weaknesses": ["RAY"],
+      "sprite": "shadowwarden"
+    }
+  },
+  "formations": [
+    { "id": "pack", "enemyIds": ["shadowpup", "shadowpup", "shadowpup"], "isBoss": false },
+    { "id": "patrol", "enemyIds": ["shadowhound", "shadowpup"], "isBoss": false },
+    { "id": "warden", "enemyIds": ["shadowwarden"], "isBoss": true }
+  ]
+}

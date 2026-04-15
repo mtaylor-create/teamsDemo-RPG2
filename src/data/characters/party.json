@@ -1,0 +1,68 @@
+[
+  {
+    "id": "kael",
+    "name": "Kael",
+    "class": "Hunter",
+    "level": 1,
+    "hp": 45,
+    "maxHp": 45,
+    "tp": 15,
+    "maxTp": 15,
+    "attack": 18,
+    "defense": 10,
+    "speed": 9,
+    "luck": 8,
+    "techniques": ["FOI"],
+    "equipment": {
+      "weapon": "Photon Blade",
+      "armor": "Leather Vest",
+      "shield": null,
+      "accessory": null
+    },
+    "portrait": "kael"
+  },
+  {
+    "id": "lyra",
+    "name": "Lyra",
+    "class": "Esper",
+    "level": 1,
+    "hp": 35,
+    "maxHp": 35,
+    "tp": 30,
+    "maxTp": 30,
+    "attack": 11,
+    "defense": 7,
+    "speed": 11,
+    "luck": 12,
+    "techniques": ["FOI", "RES"],
+    "equipment": {
+      "weapon": "Force Staff",
+      "armor": "Robe",
+      "shield": null,
+      "accessory": null
+    },
+    "portrait": "lyra"
+  },
+  {
+    "id": "ariel",
+    "name": "ARIEL",
+    "class": "CAST",
+    "level": 1,
+    "hp": 50,
+    "maxHp": 50,
+    "tp": 25,
+    "maxTp": 25,
+    "attack": 14,
+    "defense": 14,
+    "speed": 8,
+    "luck": 6,
+    "techniques": ["RAY"],
+    "equipment": {
+      "weapon": "Photon Arm",
+      "armor": "CAST Frame",
+      "shield": null,
+      "accessory": null
+    },
+    "portrait": "ariel"
+  }
+]
