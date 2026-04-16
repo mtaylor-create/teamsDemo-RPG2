@@ -5,14 +5,14 @@
       { "speaker": "", "text": "Year 1157 POST-COLLAPSE. Planet Dezolis, outer rim.", "emotion": "narration" },
       { "speaker": "", "text": "The Bane devours the stars one by one. Tonight... one fell to earth.", "emotion": "narration" }
     ],
-    "next": "kael_lyra_01"
+    "next": "end"
   },
   {
     "id": "kael_lyra_01",
     "lines": [
-      { "speaker": "Lyra", "text": "Look at it, Kael. A starship — from before the Collapse. It's incredible.", "portrait": "lyra", "emotion": "wonder" },
-      { "speaker": "Kael", "text": "It's Shadowbeast territory is what it is. We shouldn't linger.", "portrait": "kael", "emotion": "cautious" },
-      { "speaker": "Lyra", "text": "There — the stasis pod! Something's still powered inside. We have to look!", "portrait": "lyra", "emotion": "excited" }
+      { "speaker": "Lyra", "text": "Kael, this stasis pod — it's still active! After four centuries, something in here is alive.", "portrait": "lyra", "emotion": "wonder" },
+      { "speaker": "Kael", "text": "We're deep in Shadowbeast territory. Whatever's in there, we wake it fast or not at all.", "portrait": "kael", "emotion": "cautious" },
+      { "speaker": "Lyra", "text": "Look at these readings — a CAST unit, pre-Collapse. I'm cycling the release. Stand ready!", "portrait": "lyra", "emotion": "excited" }
     ],
     "next": "ariel_awakens"
   },

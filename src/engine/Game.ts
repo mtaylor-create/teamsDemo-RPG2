@@ -13,6 +13,7 @@ import { DialogueScreen } from '../screens/DialogueScreen.ts';
 import { BattleScreen } from '../screens/BattleScreen.ts';
 import { OverworldScreen } from '../screens/OverworldScreen.ts';
 import { MenuScreen } from '../screens/MenuScreen.ts';
+import { CrashSiteMapScreen } from '../screens/CrashSiteMapScreen.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ScreenData = Record<string, any>;
@@ -134,6 +135,13 @@ export class Game {
       case 'overworld':
         this.screen = new OverworldScreen(this.gctx);
         break;
+
+      // ── Crash Site Map ───────────────────────────────────────────────────
+      case 'crash_site_map': {
+        const onBattleReady = (data['onBattleReady'] as () => void) ?? (() => this.switchScreen('overworld'));
+        this.screen = new CrashSiteMapScreen(this.gctx, onBattleReady);
+        break;
+      }
 
       // ── Menu (overlay — returns to previous screen) ──────────────────────
       case 'menu':

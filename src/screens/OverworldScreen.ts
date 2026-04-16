@@ -69,20 +69,32 @@ export class OverworldScreen {
         return;
       }
 
-      if (!this.gctx.flags['intro_seen']) {
-        // First visit: play intro dialogue, then battle
+      if (this.gctx.flags['ariel_found']) {
+        // ARIEL already found — retry battle after defeat
+        this.startCrashBattle();
+      } else if (!this.gctx.flags['intro_seen']) {
+        // First visit: brief narration, then crash-site map
         this.gctx.switchScreen('dialogue', {
           startNode: 'scene_start',
           onComplete: () => {
             this.gctx.flags['intro_seen'] = true;
-            this.startCrashBattle();
+            this.startCrashSiteMap();
           },
         });
       } else {
-        // Retry after defeat: skip intro, go straight to battle
-        this.startCrashBattle();
+        // Intro seen but map not yet finished — re-enter map
+        this.startCrashSiteMap();
       }
     }
+  }
+
+  private startCrashSiteMap(): void {
+    this.gctx.switchScreen('crash_site_map', {
+      onBattleReady: () => {
+        this.gctx.flags['ariel_found'] = true;
+        this.startCrashBattle();
+      },
+    });
   }
 
   private startCrashBattle(): void {
