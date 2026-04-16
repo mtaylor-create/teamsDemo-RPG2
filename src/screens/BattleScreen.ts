@@ -5,6 +5,7 @@ import { drawPanel } from '../ui/Panel.ts';
 import { drawProgressBar } from '../ui/ProgressBar.ts';
 
 type BattleState =
+  | 'BATTLE_INTRO'
   | 'PLAYER_MENU' | 'PLAYER_TECH' | 'PLAYER_ITEM'
   | 'PLAYER_TARGET_ENEMY' | 'PLAYER_TARGET_ALLY'
   | 'EXECUTING' | 'ENEMY_TURN' | 'NEXT_TURN'
@@ -41,10 +42,10 @@ const TECHNIQUES: Record<string, { name: string; tp: number; desc: string }> = {
   RAY:  { name: 'RAY',  tp: 3, desc: 'Ray dmg to one'  },
 };
 
-const ENEMY_COLORS: Record<string, { body: string; eye: string }> = {
-  shadowpup:    { body: '#1a0a2e', eye: '#f04' },
-  shadowhound:  { body: '#2e0a0a', eye: '#f80' },
-  shadowwarden: { body: '#1e0800', eye: '#f22' },
+const ENEMY_COLORS: Record<string, { body: string; eye: string; glow: string }> = {
+  shadowpup:    { body: '#1a0a2e', eye: '#f04', glow: 'rgba(255,0,68,0.18)'   },
+  shadowhound:  { body: '#2e0a0a', eye: '#f80', glow: 'rgba(255,136,0,0.18)'  },
+  shadowwarden: { body: '#1e0800', eye: '#f22', glow: 'rgba(255,34,34,0.18)'  },
 };
 
 const ENEMY_SIZE: Record<string, { w: number; h: number }> = {
@@ -70,7 +71,7 @@ export class BattleScreen {
   private techMenuIndex = 0;
   private itemMenuIndex = 0;
   private targetIndex = 0;
-  private defendFlags: boolean[] = [false, false, false];
+  private defendFlags: boolean[] = [];
 
   private floatTexts: FloatText[] = [];
   private messages: string[] = [];
@@ -105,9 +106,17 @@ export class BattleScreen {
       fadeAlpha: 1,
     }));
 
+    this.defendFlags = new Array(this.party.length).fill(false);
+
     this.addMessage(isBoss ? '★ BOSS ENCOUNTER! ★' : 'Shadowbeasts appeared!');
+    this.state = 'BATTLE_INTRO';
     this.buildTurnQueue();
-    this.nextTurn();
+  }
+
+  private updateBattleIntro(input: InputManager): void {
+    if (input.wasPressed('Enter') || input.wasPressed('Space')) {
+      this.nextTurn();
+    }
   }
 
   private buildTurnQueue(): void {
@@ -139,6 +148,8 @@ export class BattleScreen {
       this.menuIndex = 0;
       this.state = 'PLAYER_MENU';
     } else {
+      const enemy = this.enemies[t.index];
+      if (!enemy || enemy.defeated) { this.nextTurn(); return; }
       this.state = 'ENEMY_TURN';
       this.stateTimer = 0.45;
     }
@@ -216,6 +227,7 @@ export class BattleScreen {
     }
 
     switch (this.state) {
+      case 'BATTLE_INTRO':  this.updateBattleIntro(input); break;
       case 'PLAYER_MENU':   this.updatePlayerMenu(input); break;
       case 'PLAYER_TECH':   this.updateTechMenu(input); break;
       case 'PLAYER_ITEM':   this.updateItemMenu(input); break;
@@ -280,17 +292,14 @@ export class BattleScreen {
       if (!tech) return;
       if (member.tp < tech.tp) { this.addMessage('Not enough TP!'); return; }
 
+      this._pendingTech = techId;
       if (techId === 'RES') {
         this.targetIndex = this.currentTurn.index;
         this.state = 'PLAYER_TARGET_ALLY';
       } else {
         this.targetIndex = this.firstLiveEnemy();
         this.state = 'PLAYER_TARGET_ENEMY';
-        // Store tech choice temporarily in targetIndex as negative trick:
-        // We need another way. Let's use a pendingTech field.
       }
-      this._pendingTech = techId;
-      if (techId !== 'RES') this.state = 'PLAYER_TARGET_ENEMY';
     }
   }
 
@@ -299,6 +308,7 @@ export class BattleScreen {
 
   private updateItemMenu(input: InputManager): void {
     const usable = this.getUsableItems();
+    this.itemMenuIndex = Math.max(0, Math.min(this.itemMenuIndex, usable.length - 1));
     if (usable.length === 0) {
       this.addMessage('No usable items!');
       this.state = 'PLAYER_MENU';
@@ -331,12 +341,16 @@ export class BattleScreen {
     if (live.length === 0) { this.state = 'PLAYER_MENU'; return; }
 
     if (input.wasPressed('ArrowLeft') || input.wasPressed('ArrowUp')) {
-      do { this.targetIndex = (this.targetIndex - 1 + this.enemies.length) % this.enemies.length; }
-      while (this.enemies[this.targetIndex]?.defeated);
+      let guard = 0;
+      do {
+        this.targetIndex = (this.targetIndex - 1 + this.enemies.length) % this.enemies.length;
+      } while (this.enemies[this.targetIndex]?.defeated && ++guard < this.enemies.length);
     }
     if (input.wasPressed('ArrowRight') || input.wasPressed('ArrowDown')) {
-      do { this.targetIndex = (this.targetIndex + 1) % this.enemies.length; }
-      while (this.enemies[this.targetIndex]?.defeated);
+      let guard = 0;
+      do {
+        this.targetIndex = (this.targetIndex + 1) % this.enemies.length;
+      } while (this.enemies[this.targetIndex]?.defeated && ++guard < this.enemies.length);
     }
     if (input.wasPressed('Escape') || input.wasPressed('KeyX')) {
       const hadTech = this._pendingTech !== null;
@@ -352,11 +366,19 @@ export class BattleScreen {
   }
 
   private updateTargetAlly(input: InputManager): void {
+    // Heal actions (item or RES) should skip KO'd members
+    const skipKO = this._pendingItem !== null || this._pendingTech === 'RES';
     if (input.wasPressed('ArrowLeft') || input.wasPressed('ArrowUp')) {
-      this.targetIndex = (this.targetIndex - 1 + this.party.length) % this.party.length;
+      let guard = 0;
+      do {
+        this.targetIndex = (this.targetIndex - 1 + this.party.length) % this.party.length;
+      } while (skipKO && (this.party[this.targetIndex]?.hp ?? 0) <= 0 && ++guard < this.party.length);
     }
     if (input.wasPressed('ArrowRight') || input.wasPressed('ArrowDown')) {
-      this.targetIndex = (this.targetIndex + 1) % this.party.length;
+      let guard = 0;
+      do {
+        this.targetIndex = (this.targetIndex + 1) % this.party.length;
+      } while (skipKO && (this.party[this.targetIndex]?.hp ?? 0) <= 0 && ++guard < this.party.length);
     }
     if (input.wasPressed('Escape') || input.wasPressed('KeyX')) {
       this._pendingTech = null;
@@ -458,7 +480,7 @@ export class BattleScreen {
     if (!enemy || enemy.defeated) { this.state = 'NEXT_TURN'; this.stateTimer = 0.2; return; }
 
     const livingParty = this.party.filter(c => c.hp > 0);
-    if (livingParty.length === 0) { this.state = 'NEXT_TURN'; return; }
+    if (livingParty.length === 0) { this.checkDefeat(); return; }
 
     const hasDarkBolt = enemy.template.techniques.includes('DARK_BOLT');
 
@@ -474,6 +496,7 @@ export class BattleScreen {
         this.spawnFloat(pos.x, pos.y, `-${dmg}`, '#c4f');
         if (c.hp <= 0) this.addMessage(`${c.name} was knocked out!`);
       });
+      if (this.checkDefeat()) return;
     } else {
       const target = livingParty[Math.floor(Math.random() * livingParty.length)]!;
       const targetIdx = this.party.indexOf(target);
@@ -579,7 +602,7 @@ export class BattleScreen {
 
     const pos = this.enemyPos(i);
     const sz = ENEMY_SIZE[e.template.id] ?? { w: 70, h: 60 };
-    const colors = ENEMY_COLORS[e.template.id] ?? { body: '#222', eye: '#f00' };
+    const colors = ENEMY_COLORS[e.template.id] ?? { body: '#222', eye: '#f00', glow: 'rgba(255,0,0,0.15)' };
 
     const ox = e.flashTimer > 0 ? e.shakeOffset * Math.sin(this.time * 40) : 0;
     const x = pos.x + ox;
@@ -598,7 +621,7 @@ export class BattleScreen {
     // Bane aura glow
     const glowGrad = ctx.createRadialGradient(x, y - sz.h / 2, sz.w * 0.1, x, y - sz.h / 2, sz.w * 0.8);
     glowGrad.addColorStop(0, 'rgba(80,0,0,0)');
-    glowGrad.addColorStop(1, `rgba(${colors.eye}, 0.15)`);
+    glowGrad.addColorStop(1, colors.glow);
     ctx.fillStyle = glowGrad;
     ctx.fillRect(x - sz.w, y - sz.h * 1.5, sz.w * 2, sz.h * 2);
 
@@ -688,6 +711,7 @@ export class BattleScreen {
     drawPanel(ctx, 0, 334, width, height - 334);
 
     switch (this.state) {
+      case 'BATTLE_INTRO':    this.renderBattleIntro(ctx, width, height); break;
       case 'PLAYER_MENU':     this.renderPlayerMenu(ctx, width, height); break;
       case 'PLAYER_TECH':     this.renderTechMenu(ctx, width, height); break;
       case 'PLAYER_ITEM':     this.renderItemMenu(ctx, width, height); break;
@@ -697,12 +721,38 @@ export class BattleScreen {
       case 'ENEMY_TURN':      this.renderEnemyTurnMsg(ctx, width); break;
       case 'NEXT_TURN':
       case 'EXECUTING': {
-        ctx.fillStyle = 'rgba(100,160,220,0.5)';
-        ctx.font = '12px monospace';
+        const dots = '.'.repeat((Math.floor(this.time / 0.35) % 3) + 1);
+        ctx.fillStyle = 'rgba(100,160,220,0.55)';
+        ctx.font = '11px monospace';
         ctx.textAlign = 'center';
-        ctx.fillText('...', width / 2, 360);
+        ctx.fillText(`Resolving${dots}`, width / 2, 360);
         break;
       }
+    }
+  }
+
+  private renderBattleIntro(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+    ctx.fillStyle = this.isBoss ? '#fc0' : '#f88';
+    ctx.font = `bold 14px monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText(this.isBoss ? '★ BOSS BATTLE ★' : 'BATTLE START!', w / 2, 352);
+
+    const enemyNames = this.enemies.map(e => e.template.name).join(', ');
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px monospace';
+    ctx.fillText(`Enemies: ${enemyNames}`, w / 2, 368);
+
+    ctx.fillStyle = '#4af';
+    ctx.font = '11px monospace';
+    ctx.fillText('CONTROLS', w / 2, 388);
+    ctx.fillStyle = '#889';
+    ctx.fillText('↑ ↓  Navigate menu     ENTER / SPACE  Confirm', w / 2, 402);
+    ctx.fillText('◄ ►  Select target     X / ESC         Back', w / 2, 415);
+
+    if (Math.floor(this.time / 0.5) % 2 === 0) {
+      ctx.fillStyle = '#fc0';
+      ctx.font = 'bold 12px monospace';
+      ctx.fillText('Press ENTER to begin!', w / 2, h - 10);
     }
   }
 
@@ -734,11 +784,11 @@ export class BattleScreen {
       }
     });
 
-    // Hint
-    ctx.fillStyle = 'rgba(100,140,180,0.6)';
+    // Controls hint
+    ctx.fillStyle = 'rgba(100,160,220,0.85)';
     ctx.font = '10px monospace';
     ctx.textAlign = 'right';
-    ctx.fillText('↑↓ Select  ENTER Confirm', _w - 10, _h - 8);
+    ctx.fillText('↑↓ Select   ENTER/SPACE Confirm', _w - 10, _h - 8);
   }
 
   private renderTechMenu(ctx: CanvasRenderingContext2D, _w: number, _h: number): void {
@@ -825,13 +875,22 @@ export class BattleScreen {
     if (!this.currentTurn) return;
     const enemy = this.enemies[this.currentTurn.index];
     if (!enemy) return;
-    ctx.fillStyle = '#f88';
-    ctx.font = 'bold 14px monospace';
+
+    ctx.fillStyle = '#f44';
+    ctx.font = 'bold 11px monospace';
     ctx.textAlign = 'center';
+    ctx.fillText('— ENEMY PHASE —', w / 2, 348);
+
     const pulse = Math.sin(this.time * 6) * 0.3 + 0.7;
+    ctx.fillStyle = '#f88';
+    ctx.font = 'bold 13px monospace';
     ctx.globalAlpha = pulse;
-    ctx.fillText(`${enemy.template.name} is acting...`, w / 2, 360);
+    ctx.fillText(`${enemy.template.name} is acting...`, w / 2, 368);
     ctx.globalAlpha = 1;
+
+    ctx.fillStyle = 'rgba(140,140,160,0.75)';
+    ctx.font = '10px monospace';
+    ctx.fillText('Wait for your turn...', w / 2, 388);
   }
 
   private renderVictory(ctx: CanvasRenderingContext2D, w: number, h: number): void {

@@ -70,30 +70,36 @@ export class OverworldScreen {
       }
 
       if (!this.gctx.flags['intro_seen']) {
-        // Trigger intro dialogue -> battle -> post-battle dialogue
-        this.gctx.flags['intro_seen'] = true;
+        // First visit: play intro dialogue, then battle
         this.gctx.switchScreen('dialogue', {
           startNode: 'scene_start',
           onComplete: () => {
-            // After dialogue ends at battle_trigger choice, start battle
-            const formation = this.gctx.formations.find(f => f.id === 'pack');
-            const enemyTemplates = (formation?.enemyIds ?? []).map(id => this.gctx.allEnemies[id]).filter(Boolean);
-            this.gctx.switchScreen('battle', {
-              enemyTemplates,
-              isBoss: false,
-              onVictory: () => {
-                this.gctx.flags['crash_cleared'] = true;
-                this.gctx.switchScreen('dialogue', {
-                  startNode: 'post_battle_01',
-                  onComplete: () => this.gctx.switchScreen('overworld'),
-                });
-              },
-              onDefeat: () => this.gctx.switchScreen('overworld'),
-            });
+            this.gctx.flags['intro_seen'] = true;
+            this.startCrashBattle();
           },
         });
+      } else {
+        // Retry after defeat: skip intro, go straight to battle
+        this.startCrashBattle();
       }
     }
+  }
+
+  private startCrashBattle(): void {
+    const formation = this.gctx.formations.find(f => f.id === 'pack');
+    const enemyTemplates = (formation?.enemyIds ?? []).map(id => this.gctx.allEnemies[id]).filter(Boolean);
+    this.gctx.switchScreen('battle', {
+      enemyTemplates,
+      isBoss: false,
+      onVictory: () => {
+        this.gctx.flags['crash_cleared'] = true;
+        this.gctx.switchScreen('dialogue', {
+          startNode: 'post_battle_01',
+          onComplete: () => this.gctx.switchScreen('overworld'),
+        });
+      },
+      onDefeat: () => this.gctx.switchScreen('overworld'),
+    });
   }
 
   private notify(msg: string): void {

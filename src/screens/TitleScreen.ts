@@ -39,7 +39,7 @@ export class TitleScreen {
     }
 
     if (input.wasPressed('Enter') || input.wasPressed('Space')) {
-      this.ctx.switchScreen('dialogue', { startNode: 'scene_start' });
+      this.ctx.switchScreen('overworld');
     }
   }
 
