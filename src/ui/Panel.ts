@@ -7,18 +7,27 @@ export function drawPanel(
   h: number,
   title?: string
 ): void {
-  // Background
-  ctx.fillStyle = 'rgba(0, 4, 12, 0.95)';
+  // Background — dark navy with visible depth
+  ctx.fillStyle = 'rgba(6, 14, 30, 0.96)';
   ctx.fillRect(x, y, w, h);
 
+  // Inner bevel highlight (top/left edges)
+  ctx.strokeStyle = 'rgba(60, 130, 200, 0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x + 2, y + h - 2);
+  ctx.lineTo(x + 2, y + 2);
+  ctx.lineTo(x + w - 2, y + 2);
+  ctx.stroke();
+
   // Main border
-  ctx.strokeStyle = '#4af';
+  ctx.strokeStyle = '#5bf';
   ctx.lineWidth = 2;
   ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
 
   // Corner accents
   const c = 8;
-  ctx.strokeStyle = '#8df';
+  ctx.strokeStyle = '#9ef';
   ctx.lineWidth = 1;
   ctx.beginPath();
   // Top-left
@@ -33,9 +42,9 @@ export function drawPanel(
 
   if (title) {
     // Title background strip
-    ctx.fillStyle = '#4af';
+    ctx.fillStyle = '#5bf';
     ctx.fillRect(x + 2, y + 2, w - 4, 18);
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = '#001';
     ctx.font = 'bold 11px monospace';
     ctx.textAlign = 'left';
     ctx.fillText(title, x + 8, y + 14);

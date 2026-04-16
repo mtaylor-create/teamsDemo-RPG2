@@ -8,6 +8,7 @@ const PORTRAIT_COLORS: Record<string, string> = {
   kael: '#c84',
   lyra: '#68c',
   ariel: '#4ca',
+  shadowwarden: '#a22',
 };
 
 export class DialogueScreen {
@@ -127,16 +128,16 @@ export class DialogueScreen {
   render(ctx: CanvasRenderingContext2D): void {
     const { width, height } = this.gctx.canvas;
 
-    // Background — dark starfield with distant planet
+    // Background — richer starfield
     const grad = ctx.createLinearGradient(0, 0, 0, height);
-    grad.addColorStop(0, '#000010');
-    grad.addColorStop(1, '#00000a');
+    grad.addColorStop(0, '#060a1e');
+    grad.addColorStop(1, '#040814');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, width, height);
 
     for (const s of this.bgStars) {
-      const alpha = 0.2 + s.b * 0.4 * (0.8 + 0.2 * Math.sin(this.time + s.x));
-      ctx.fillStyle = `rgba(160,200,255,${alpha})`;
+      const alpha = 0.3 + s.b * 0.5 * (0.8 + 0.2 * Math.sin(this.time + s.x));
+      ctx.fillStyle = `rgba(190,220,255,${alpha})`;
       ctx.fillRect(Math.floor(s.x), Math.floor(s.y), 1, 1);
     }
 
@@ -180,8 +181,8 @@ export class DialogueScreen {
 
     // Dialogue text (with word wrap)
     const textY = isNarration ? boxY + 22 : boxY + 40;
-    const textColor = line.emotion === 'narration' ? '#8ae' :
-      line.emotion === 'title' ? '#fc0' : '#ddf';
+    const textColor = line.emotion === 'narration' ? '#9bf' :
+      line.emotion === 'title' ? '#fd2' : '#eef';
 
     ctx.fillStyle = textColor;
     const fontSize = line.emotion === 'title' ? 16 : 13;
@@ -230,16 +231,16 @@ export class DialogueScreen {
     const groundY = height - 175;
 
     // Ground
-    ctx.fillStyle = '#0a0c10';
+    ctx.fillStyle = '#121824';
     ctx.fillRect(0, groundY, width, 20);
 
-    // Crashed ship — tilted dark metallic shape
+    // Crashed ship — tilted metallic shape, brighter
     ctx.save();
     ctx.translate(440, groundY - 40);
     ctx.rotate(0.15);
-    ctx.fillStyle = '#1a2030';
+    ctx.fillStyle = '#283850';
     ctx.fillRect(-90, -30, 180, 45);
-    ctx.fillStyle = '#0d1520';
+    ctx.fillStyle = '#1a2538';
     ctx.fillRect(-70, -50, 60, 25);
     // Amber emergency light
     const flickerAlpha = 0.5 + 0.5 * Math.sin(this.time * 4.5);
@@ -247,10 +248,10 @@ export class DialogueScreen {
     ctx.fillRect(40, -20, 8, 8);
     ctx.restore();
 
-    // Trees / rocks silhouette
+    // Trees / rocks silhouette — slightly brighter
     for (let i = 0; i < 6; i++) {
       const tx = 30 + i * 100;
-      ctx.fillStyle = '#050810';
+      ctx.fillStyle = '#0a1018';
       ctx.fillRect(tx, groundY - 30, 12, 35);
       ctx.beginPath();
       ctx.moveTo(tx - 10, groundY - 28);

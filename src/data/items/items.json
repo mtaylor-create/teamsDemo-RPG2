@@ -70,5 +70,37 @@
     "type": "shield",
     "stats": { "defense": 4 },
     "price": 250
+  },
+  {
+    "id": "star_atomizer",
+    "name": "Star Atomizer",
+    "description": "Restores 30 HP to the entire party.",
+    "type": "consumable",
+    "effect": { "type": "heal_hp", "value": 30, "target": "party" },
+    "price": 500
+  },
+  {
+    "id": "telepipe",
+    "name": "Telepipe",
+    "description": "Warps the party to safety. (Not yet functional.)",
+    "type": "consumable",
+    "effect": { "type": "heal_hp", "value": 0, "target": "party" },
+    "price": 200
+  },
+  {
+    "id": "photon_arm",
+    "name": "Photon Arm",
+    "description": "A CAST-integrated photon weapon system.",
+    "type": "weapon",
+    "stats": { "attack": 6 },
+    "price": 450
+  },
+  {
+    "id": "cast_frame",
+    "name": "CAST Frame",
+    "description": "Integrated armor plating for CAST units.",
+    "type": "armor",
+    "stats": { "defense": 7 },
+    "price": 400
   }
 ]

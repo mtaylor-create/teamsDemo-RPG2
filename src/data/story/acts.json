@@ -4,8 +4,8 @@
     {
       "id": "act1",
       "name": "Echoes of the Fallen Star",
-      "summary": "Kael and Lyra discover ARIEL in the crash site outside Crestfall and learn of the Stellar Archive — the last hope against the Bane.",
-      "locations": ["Crestfall Village", "Crash Site", "Dezolis Wilds"],
+      "summary": "Kael and Lyra discover ARIEL in the crash site outside Crestfall, cross the perilous Dezolis Wilds, and battle a Shadowwarden at the spaceport to secure a ship off-world.",
+      "locations": ["Crestfall Village", "Crash Site", "Dezolis Wilds", "Dezolis Spaceport"],
       "status": "demo"
     },
     {

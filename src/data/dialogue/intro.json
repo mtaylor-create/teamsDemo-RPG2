@@ -44,13 +44,83 @@
       { "speaker": "Lyra", "text": "Then we need a ship. And a way off this dying world.", "portrait": "lyra", "emotion": "hopeful" },
       { "speaker": "Kael", "text": "We find one. Together.", "portrait": "kael", "emotion": "determined" }
     ],
-    "next": "tobe_continued"
+    "next": "crash_site_resolved"
   },
   {
-    "id": "tobe_continued",
+    "id": "crash_site_resolved",
     "lines": [
-      { "speaker": "", "text": "Their journey has only begun...", "emotion": "narration" },
-      { "speaker": "", "text": "~ TO BE CONTINUED ~", "emotion": "title" }
+      { "speaker": "", "text": "The Dezolis Wilds lie between the crash site and the old spaceport. The journey continues...", "emotion": "narration" }
+    ],
+    "next": "end"
+  },
+  {
+    "id": "wilds_approach",
+    "lines": [
+      { "speaker": "Kael", "text": "The Dezolis Wilds. Stay close — the snow hides more than just ice out here.", "portrait": "kael", "emotion": "cautious" },
+      { "speaker": "ARIEL", "text": "Scanning perimeter. Ambient temperature: negative forty-two. Detecting biological signatures — multiple, scattered, converging on our position.", "portrait": "ariel", "emotion": "neutral" },
+      { "speaker": "Lyra", "text": "There's a dark current running through this place. Like the land itself is sick. The Bane's corruption runs deeper than I feared.", "portrait": "lyra", "emotion": "uneasy" },
+      { "speaker": "Kael", "text": "Then we push through fast. The spaceport should be on the other side of this valley. Move out.", "portrait": "kael", "emotion": "determined" }
+    ],
+    "next": "end"
+  },
+  {
+    "id": "wilds_battle_trigger",
+    "lines": [
+      { "speaker": "ARIEL", "text": "Alert — hostile signatures spiking. They are emerging from beneath the permafrost.", "portrait": "ariel", "emotion": "urgent" },
+      { "speaker": "Kael", "text": "Weapons up! They're all around us!", "portrait": "kael", "emotion": "battle" }
+    ],
+    "choices": [
+      { "text": "Fight through!", "next": "end" }
+    ]
+  },
+  {
+    "id": "wilds_cleared",
+    "lines": [
+      { "speaker": "Lyra", "text": "Look — beyond the ridge. That has to be the spaceport. I can see the old landing towers.", "portrait": "lyra", "emotion": "hopeful" },
+      { "speaker": "ARIEL", "text": "Confirmed. Structure profile matches pre-Collapse Dezolis Orbital Facility Seven. Power signature is faint but present.", "portrait": "ariel", "emotion": "neutral" },
+      { "speaker": "Kael", "text": "If there's still power, there might still be a ship. Let's not waste this chance.", "portrait": "kael", "emotion": "determined" }
+    ],
+    "next": "end"
+  },
+  {
+    "id": "spaceport_arrival",
+    "lines": [
+      { "speaker": "ARIEL", "text": "Remarkable. This facility predates the Collapse by at least two centuries. These blast doors were designed to withstand orbital bombardment — yet something tore them open from the inside.", "portrait": "ariel", "emotion": "analytical" },
+      { "speaker": "Kael", "text": "Emergency lights are still cycling. Four hundred years and the generators haven't quit. They built things to last back then.", "portrait": "kael", "emotion": "cautious" },
+      { "speaker": "Lyra", "text": "Kael... something is here. Something powerful. I can feel it pressing against my mind — a shadow, old and patient, coiled around the heart of this place.", "portrait": "lyra", "emotion": "afraid" },
+      { "speaker": "Kael", "text": "Then we stay sharp. Whatever's nesting in here, it's between us and our way off this world.", "portrait": "kael", "emotion": "determined" }
+    ],
+    "next": "end"
+  },
+  {
+    "id": "spaceport_boss_trigger",
+    "lines": [
+      { "speaker": "", "text": "The darkness at the center of the hangar shifts. Two points of crimson light ignite in the void — eyes, ancient and hateful, fixed upon the intruders.", "emotion": "narration" },
+      { "speaker": "Shadowwarden", "text": "You carry the light of a dead age. I have guarded this threshold since the stars began to fall. None pass. None leave. Dezolis belongs to the Bane now.", "portrait": "shadowwarden", "emotion": "menacing" },
+      { "speaker": "Lyra", "text": "It's a Shadowwarden — a general of the Bane's host. Be careful, this is nothing like the beasts in the wilds!", "portrait": "lyra", "emotion": "afraid" },
+      { "speaker": "Kael", "text": "We've come too far to stop now. ARIEL, Lyra — together. We end this here!", "portrait": "kael", "emotion": "battle" }
+    ],
+    "choices": [
+      { "text": "Stand your ground!", "next": "end" }
+    ]
+  },
+  {
+    "id": "spaceport_victory",
+    "lines": [
+      { "speaker": "", "text": "The Shadowwarden dissolves into coiling smoke, its crimson eyes dimming like dying embers. The oppressive darkness lifts from the hangar.", "emotion": "narration" },
+      { "speaker": "Lyra", "text": "It's gone... the shadow presence has broken. I can breathe again.", "portrait": "lyra", "emotion": "relieved" },
+      { "speaker": "ARIEL", "text": "Scanning hangar bay. One vessel intact — a Landale-class courier, pre-Collapse. Reactor is dormant but viable. I can bring her systems online.", "portrait": "ariel", "emotion": "hopeful" },
+      { "speaker": "Kael", "text": "A Landale... I've only heard of those in old songs. Can she fly?", "portrait": "kael", "emotion": "wonder" },
+      { "speaker": "ARIEL", "text": "With repairs, yes. The void drive is functional. Motavia is within reach — and with it, the Stellar Archive. Our mission continues.", "portrait": "ariel", "emotion": "determined" }
+    ],
+    "next": "act1_finale"
+  },
+  {
+    "id": "act1_finale",
+    "lines": [
+      { "speaker": "", "text": "The old ship groans to life, her engines casting blue fire across the frozen tarmac. Dezolis falls away below — a world of ice and shadow, scarred but not yet lost. Ahead, the void between worlds awaits, vast and silent, threaded with the fading light of dying stars.", "emotion": "narration" },
+      { "speaker": "", "text": "But in the deep places between the worlds, the Bane watches. It has felt the sting of a small defiance, and it does not forget. The darkness stirs. The next star is already falling.", "emotion": "narration" },
+      { "speaker": "", "text": "~ TO BE CONTINUED IN ACT 2 ~", "emotion": "title" }
     ],
     "next": "end"
   },

@@ -14,18 +14,22 @@ npm run test:run  # run once (CI mode)
 
 Open the URL in a browser. The game renders on a single `640×480` canvas element.
 
-## What's playable now (Demo v0.1)
+## What's playable now (Demo v0.2)
 
-The demo covers **Act 1, Chapter 1: Crash Site**. The complete playable sequence:
+The demo covers **Act 1: Echoes of the Fallen Star** — from discovering ARIEL at the crash site to departing Dezolis aboard a pre-Collapse ship. The complete playable sequence:
 
 1. **Title screen** — ENTER to start
-2. **Overworld** — navigate left/right between two locations
+2. **Overworld** — navigate left/right between four locations
 3. **Crash Site** → **Dialogue** (two-line narration sets the scene)
 4. **Crash Site Map** — top-down exploration; walk to the stasis pod to trigger contact
 5. **Dialogue** — Kael and Lyra find ARIEL; ARIEL joins the party
-6. **Battle** — first encounter with a pack of Shadowbeasts
+6. **Battle** — first encounter with a pack of Shadowpups
 7. **Victory Dialogue** — party resolves to find a ship
-8. Back to **Overworld** (crash site is now cleared)
+8. **Dezolis Wilds** (unlocked) → **Dialogue** → **Battle** with Ice Crawlers / Shadowhounds
+9. **Victory Dialogue** — party spots the spaceport
+10. **Dezolis Spaceport** (unlocked) → **Dialogue** → **Boss Battle** with the Shadowwarden
+11. **Victory Dialogue** — ARIEL finds a Landale-class ship; party departs Dezolis
+12. **Act 1 Finale** — narration: "To be continued in Act 2"
 
 ## Project structure
 
@@ -47,9 +51,9 @@ src/
     ProgressBar.ts    — drawProgressBar() — HP/TP bars with colour shift
   data/
     characters/party.json   — Kael, Lyra, ARIEL stats
-    enemies/encounters.json — Enemy stats + formation table
-    items/items.json        — All items (consumables, weapons, armour)
-    dialogue/intro.json     — All dialogue nodes for Act 1 demo
+    enemies/encounters.json — Enemy stats + formation table (5 enemies, 6 formations)
+    items/items.json        — All items (consumables, weapons, armour, 13 total)
+    dialogue/intro.json     — All dialogue nodes for Act 1 (14 nodes incl. wilds + spaceport)
     story/acts.json         — Act structure (act1 demo, act2/3 planned)
   main.ts             — Entry point; creates Game, calls start()
 assets/               — (empty) placeholder for future sprites/audio

@@ -186,31 +186,31 @@ export class CrashSiteMapScreen {
   // ---------------------------------------------------------------------------
 
   private drawSky(ctx: CanvasRenderingContext2D): void {
-    // Deep space gradient (upper portion only)
+    // Deep space gradient — richer blues
     const sky = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
-    sky.addColorStop(0, '#010415');
-    sky.addColorStop(1, '#0a1030');
+    sky.addColorStop(0, '#060a20');
+    sky.addColorStop(1, '#101840');
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, CANVAS_W, GROUND_Y);
 
-    // Stars
+    // Stars — brighter
     for (const s of STARS) {
-      const alpha = 0.35 + s.b * 0.6 * (0.85 + 0.15 * Math.sin(this.time * 1.3 + s.x * 0.05));
-      ctx.fillStyle = `rgba(180,220,255,${alpha.toFixed(3)})`;
+      const alpha = 0.4 + s.b * 0.6 * (0.85 + 0.15 * Math.sin(this.time * 1.3 + s.x * 0.05));
+      ctx.fillStyle = `rgba(200,230,255,${alpha.toFixed(3)})`;
       ctx.fillRect(Math.floor(s.x), Math.floor(s.y), 1, 1);
     }
   }
 
   private drawGround(ctx: CanvasRenderingContext2D): void {
-    // Ground fill
+    // Ground fill — brighter terrain
     const groundGrad = ctx.createLinearGradient(0, GROUND_Y, 0, CANVAS_H);
-    groundGrad.addColorStop(0, '#141820');
-    groundGrad.addColorStop(1, '#0c0e14');
+    groundGrad.addColorStop(0, '#1a2230');
+    groundGrad.addColorStop(1, '#10151e');
     ctx.fillStyle = groundGrad;
     ctx.fillRect(0, GROUND_Y, CANVAS_W, CANVAS_H - GROUND_Y);
 
     // Horizon line
-    ctx.strokeStyle = '#3a5070';
+    ctx.strokeStyle = '#4a6888';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(0, GROUND_Y);
@@ -218,7 +218,7 @@ export class CrashSiteMapScreen {
     ctx.stroke();
 
     // Subtle grid texture (perspective lines receding from bottom)
-    ctx.strokeStyle = 'rgba(50, 75, 110, 0.5)';
+    ctx.strokeStyle = 'rgba(60, 90, 130, 0.55)';
     ctx.lineWidth = 1;
     const vanishX = CANVAS_W / 2;
     const vanishY = GROUND_Y;
@@ -231,7 +231,7 @@ export class CrashSiteMapScreen {
       ctx.stroke();
     }
     // Horizontal grid lines
-    ctx.strokeStyle = 'rgba(50, 75, 110, 0.35)';
+    ctx.strokeStyle = 'rgba(60, 90, 130, 0.40)';
     const hSteps = 5;
     for (let i = 1; i <= hSteps; i++) {
       const gy = GROUND_Y + (i / hSteps) * (CANVAS_H - GROUND_Y);
@@ -248,25 +248,25 @@ export class CrashSiteMapScreen {
     ctx.translate(355, 148);
     ctx.rotate(0.10);
 
-    // Main hull body
-    ctx.fillStyle = '#2e4260';
+    // Main hull body — brighter metallic
+    ctx.fillStyle = '#3a5578';
     ctx.fillRect(-130, -28, 260, 56);
 
     // Darker upper cabin/bridge
-    ctx.fillStyle = '#1d2d42';
+    ctx.fillStyle = '#253a55';
     ctx.fillRect(-105, -52, 100, 30);
 
-    // Hull detail strip — slightly lighter accent
-    ctx.fillStyle = '#3a5878';
+    // Hull detail strip — lighter accent
+    ctx.fillStyle = '#4a6a90';
     ctx.fillRect(-130, -6, 260, 4);
 
     // Scorch marks / damage patches
-    ctx.fillStyle = '#0e1520';
+    ctx.fillStyle = '#141e2e';
     ctx.fillRect(-90, -24, 30, 12);
     ctx.fillRect(60, 10, 40, 14);
 
     // Wing strut (left)
-    ctx.fillStyle = '#253850';
+    ctx.fillStyle = '#304a68';
     ctx.fillRect(-180, 14, 60, 12);
 
     // Wing strut (right)
@@ -297,12 +297,12 @@ export class CrashSiteMapScreen {
       ctx.fillStyle = 'rgba(0,0,0,0.4)';
       ctx.fillRect(d.x + 2, d.y + 3, d.w, d.h);
 
-      // Main fragment
-      ctx.fillStyle = '#2d4055';
+      // Main fragment — brighter
+      ctx.fillStyle = '#385570';
       ctx.fillRect(d.x, d.y, d.w, d.h);
 
       // Lighter top edge — gives depth
-      ctx.fillStyle = '#3d5570';
+      ctx.fillStyle = '#4a6a88';
       ctx.fillRect(d.x, d.y, d.w, 3);
     }
 
@@ -314,7 +314,7 @@ export class CrashSiteMapScreen {
       { x: 565, y: 270, w: 8, h: 5  },
       { x: 68,  y: 295, w: 7, h: 4  },
     ];
-    ctx.fillStyle = '#243040';
+    ctx.fillStyle = '#304558';
     for (const f of fragments) {
       ctx.fillRect(f.x, f.y, f.w, f.h);
     }

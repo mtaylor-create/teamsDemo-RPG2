@@ -107,9 +107,9 @@ Core interfaces: `Character`, `Enemy`, `Item`, `ItemEffect`, `DialogueNode`, `Di
 
 Two shared drawing helpers used by every screen:
 
-**`drawPanel(ctx, x, y, w, h, title?)`** — retro sci-fi bordered box: near-black fill, cyan `#4af` 2px border, `#8df` corner accent lines. Optional `title` renders a filled header strip.
+**`drawPanel(ctx, x, y, w, h, title?)`** — retro sci-fi bordered box: dark navy fill (`rgba(6, 14, 30, 0.96)`), cyan `#5bf` 2px border, `#9ef` corner accent lines, subtle inner bevel highlight. Optional `title` renders a filled header strip.
 
-**`drawProgressBar(ctx, x, y, w, h, current, max, color)`** — fills proportionally; colour shifts to `#fa2` below 50% and `#f42` below 25% regardless of the `color` argument.
+**`drawProgressBar(ctx, x, y, w, h, current, max, color)`** — fills proportionally on a dark indigo `#0e1222` background; colour shifts to `#fb3` below 50% and `#f53` below 25% regardless of the `color` argument. Border is `#3a4a60`.
 
 Do not inline these drawing patterns in screens. Add shared patterns here if they appear in more than one file.
 
@@ -120,4 +120,4 @@ Do not inline these drawing patterns in screens. Add shared patterns here if the
 - Timers count **down** to zero (set to a positive value, subtract `dt` each frame, fire when `≤ 0`).
 - `stateTimer` in BattleScreen counts **up** (set to 0, accumulate, fire when `≥ threshold`) — this is an inconsistency, noted in [known-issues.md](known-issues.md).
 - Font: always `monospace`. Sizes used: 9, 10, 11, 12, 13, 14, 16, 20, 22, 28, 64 px.
-- Colours: cyan `#4af` / `#8df` for UI chrome; gold `#fc0` for selected/highlight; `#ddf` / `#cef` for body text; `#899` / `#7ab` for secondary text; `#4f4` for HP/success; `#f44` for damage/KO.
+- Colours: cyan `#5bf` / `#9ef` for UI chrome; gold `#fc0` for selected/highlight; `#eef` / `#def` for body text; `#9ab` / `#7ab` for secondary text; `#4f4` for HP/success; `#f44` for damage/KO.

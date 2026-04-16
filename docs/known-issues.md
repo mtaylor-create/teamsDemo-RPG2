@@ -70,6 +70,8 @@ All enemies and characters are drawn procedurally with canvas primitives. `Enemy
 ## Low-priority polish
 
 - `stateTimer` direction (Bug 14 above)
-- DialogueScreen background is a static silhouette; it does not update to show the current location's actual visual
-- OverworldScreen has only two locations; adding more requires expanding the `LOCATIONS` array and adjusting path rendering
+- DialogueScreen background is a static silhouette; it does not update to show the current location's actual visual (now has scenes for crash site, wilds, and spaceport but still uses a single crash-site backdrop)
 - BattleScreen enemy positions are computed by index; a formation layout system would improve readability for larger or mixed groups
+- Wilds and Spaceport locations use the overworld interaction flow (dialogue → battle) rather than having dedicated map screens like the crash site
+- Battle technique menu shows TP cost and a brief description, but new players may still find terms like FOI/RES/RAY opaque; a tooltip system could help
+- After defeat the player returns silently to the overworld with no retry prompt or guidance

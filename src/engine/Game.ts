@@ -80,10 +80,11 @@ export class Game {
       dialogueNodes.set(node.id, node);
     }
 
-    // Starting inventory: a handful of consumables
+    // Starting inventory: consumables for the expanded demo
     const inventory: InventorySlot[] = [
-      { itemId: 'monomate', quantity: 3 },
-      { itemId: 'dimate',   quantity: 1 },
+      { itemId: 'monomate',       quantity: 5 },
+      { itemId: 'dimate',         quantity: 2 },
+      { itemId: 'moon_atomizer',  quantity: 1 },
     ];
 
     this.gctx = {

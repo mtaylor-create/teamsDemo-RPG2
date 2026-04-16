@@ -38,11 +38,40 @@
       "techniques": ["DARK_BOLT"],
       "weaknesses": ["RAY"],
       "sprite": "shadowwarden"
+    },
+    "ice_crawler": {
+      "id": "ice_crawler",
+      "name": "Ice Crawler",
+      "hp": 28,
+      "attack": 11,
+      "defense": 8,
+      "speed": 7,
+      "exp": 22,
+      "meseta": 10,
+      "techniques": [],
+      "weaknesses": ["FOI"],
+      "sprite": "ice_crawler"
+    },
+    "void_stalker": {
+      "id": "void_stalker",
+      "name": "Void Stalker",
+      "hp": 40,
+      "attack": 15,
+      "defense": 6,
+      "speed": 14,
+      "exp": 35,
+      "meseta": 18,
+      "techniques": ["DARK_BOLT"],
+      "weaknesses": ["RAY"],
+      "sprite": "void_stalker"
     }
   },
   "formations": [
     { "id": "pack", "enemyIds": ["shadowpup", "shadowpup", "shadowpup"], "isBoss": false },
     { "id": "patrol", "enemyIds": ["shadowhound", "shadowpup"], "isBoss": false },
-    { "id": "warden", "enemyIds": ["shadowwarden"], "isBoss": true }
+    { "id": "warden", "enemyIds": ["shadowwarden"], "isBoss": true },
+    { "id": "wilds_crawlers", "enemyIds": ["ice_crawler", "ice_crawler"], "isBoss": false },
+    { "id": "wilds_mixed", "enemyIds": ["ice_crawler", "shadowhound"], "isBoss": false },
+    { "id": "stalker_ambush", "enemyIds": ["void_stalker", "void_stalker"], "isBoss": false }
   ]
 }

@@ -9,7 +9,8 @@
       "Bash(npm install *)",
       "Bash(npx tsc *)",
       "Bash(npm run *)",
-      "Bash(wc -l c:/Users/mtayl/Documents/GitHub/teamsDemo/docs/*.md c:/Users/mtayl/Documents/GitHub/teamsDemo/README.md)"
+      "Bash(wc -l c:/Users/mtayl/Documents/GitHub/teamsDemo/docs/*.md c:/Users/mtayl/Documents/GitHub/teamsDemo/README.md)",
+      "Bash(npx vite *)"
     ]
   }
 }

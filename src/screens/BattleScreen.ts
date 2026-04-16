@@ -43,15 +43,19 @@ const TECHNIQUES: Record<string, { name: string; tp: number; desc: string }> = {
 };
 
 const ENEMY_COLORS: Record<string, { body: string; eye: string; glow: string }> = {
-  shadowpup:    { body: '#1a0a2e', eye: '#f04', glow: 'rgba(255,0,68,0.18)'   },
-  shadowhound:  { body: '#2e0a0a', eye: '#f80', glow: 'rgba(255,136,0,0.18)'  },
-  shadowwarden: { body: '#1e0800', eye: '#f22', glow: 'rgba(255,34,34,0.18)'  },
+  shadowpup:    { body: '#28143e', eye: '#f26', glow: 'rgba(255,40,80,0.22)'   },
+  shadowhound:  { body: '#3e1414', eye: '#fa4', glow: 'rgba(255,160,40,0.22)'  },
+  shadowwarden: { body: '#301408', eye: '#f44', glow: 'rgba(255,60,60,0.22)'  },
+  ice_crawler:  { body: '#142838', eye: '#4ef', glow: 'rgba(60,220,255,0.20)'  },
+  void_stalker: { body: '#1e0830', eye: '#c4f', glow: 'rgba(180,60,255,0.22)' },
 };
 
 const ENEMY_SIZE: Record<string, { w: number; h: number }> = {
   shadowpup:    { w: 55, h: 45 },
   shadowhound:  { w: 80, h: 65 },
   shadowwarden: { w: 120, h: 100 },
+  ice_crawler:  { w: 70, h: 55 },
+  void_stalker: { w: 75, h: 70 },
 };
 
 export class BattleScreen {
@@ -332,7 +336,9 @@ export class BattleScreen {
   private getUsableItems(): { itemId: string; quantity: number }[] {
     return this.gctx.inventory.filter(slot => {
       const item = this.allItems.find(i => i.id === slot.itemId);
-      return item && item.type === 'consumable' && item.effect?.type === 'heal_hp';
+      if (!item || item.type !== 'consumable' || !item.effect) return false;
+      // Only single-target heal_hp items with a positive value
+      return item.effect.type === 'heal_hp' && item.effect.target === 'single' && item.effect.value > 0;
     });
   }
 
@@ -542,12 +548,12 @@ export class BattleScreen {
   render(ctx: CanvasRenderingContext2D): void {
     const { width, height } = this.gctx.canvas;
 
-    // Background
-    ctx.fillStyle = '#00020a';
+    // Background — darker indigo
+    ctx.fillStyle = '#060a18';
     ctx.fillRect(0, 0, width, height);
 
-    // Subtle grid lines in enemy area
-    ctx.strokeStyle = 'rgba(0, 40, 80, 0.35)';
+    // Grid lines in enemy area — more visible
+    ctx.strokeStyle = 'rgba(20, 60, 110, 0.35)';
     ctx.lineWidth = 1;
     for (let x = 0; x < width; x += 40) {
       ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 260); ctx.stroke();
@@ -643,7 +649,7 @@ export class BattleScreen {
     }
 
     // Enemy name
-    ctx.fillStyle = '#ccc';
+    ctx.fillStyle = '#dde';
     ctx.font = '11px monospace';
     ctx.textAlign = 'center';
     ctx.fillText(e.template.name, x, y + 12);
@@ -685,17 +691,17 @@ export class BattleScreen {
       }
 
       const ko = c.hp <= 0;
-      ctx.fillStyle = ko ? '#555' : isActive ? '#fc0' : '#cef';
+      ctx.fillStyle = ko ? '#666' : isActive ? '#fc0' : '#def';
       ctx.font = `bold 11px monospace`;
       ctx.textAlign = 'left';
       ctx.fillText(ko ? `${c.name} [KO]` : c.name, px + 6, 276);
 
-      ctx.fillStyle = '#888';
+      ctx.fillStyle = '#99a';
       ctx.font = '9px monospace';
       ctx.fillText(c.class, px + 6, 287);
 
       if (!ko) {
-        ctx.fillStyle = '#aaa';
+        ctx.fillStyle = '#bbc';
         ctx.font = '10px monospace';
         ctx.fillText(`HP`, px + 6, 302);
         drawProgressBar(ctx, px + 22, 294, panelW - 30, 7, c.hp, c.maxHp, '#4f4');

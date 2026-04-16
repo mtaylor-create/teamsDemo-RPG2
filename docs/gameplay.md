@@ -6,18 +6,22 @@ Complete reference for all implemented game systems, content, and controls. Upda
 
 ## Demo flow and game flags
 
-The demo follows a strict linear sequence gated by three flags in `gctx.flags`:
+The demo follows a linear sequence gated by flags in `gctx.flags`:
 
 | Flag | Set when | Effect |
 |---|---|---|
 | `intro_seen` | Narration dialogue completes on first crash site visit | Skips narration on re-entry; goes straight to map |
 | `ariel_found` | Player interacts with the stasis pod on the map | Skips map on re-entry; goes straight to battle |
-| `crash_cleared` | Battle victory dialogue completes | Crash site shows cleared state; no further battle |
+| `crash_cleared` | Crash site battle victory dialogue completes | Crash site shows cleared state; unlocks Dezolis Wilds |
+| `wilds_entered` | First wilds approach dialogue completes | Skips approach dialogue on re-entry |
+| `wilds_cleared` | Wilds battle victory dialogue completes | Wilds shows cleared state; unlocks Spaceport |
+| `spaceport_entered` | First spaceport arrival dialogue completes | Skips arrival dialogue on re-entry |
+| `spaceport_cleared` | Spaceport boss victory dialogue completes | Spaceport shows cleared state; Act 1 complete |
 
-### First-time sequence (no flags set)
+### Full sequence (no flags set)
 
 ```
-Title → Overworld
+Title → Overworld (4 locations)
   → [interact Crash Site]
     → Dialogue (scene_start → end)          sets intro_seen
     → CrashSiteMapScreen
@@ -29,13 +33,33 @@ Title → Overworld
             sets crash_cleared
             → Overworld
           → Defeat → Overworld
+
+  → [interact Dezolis Wilds] (requires crash_cleared)
+    → Dialogue (wilds_approach → end)       sets wilds_entered
+    → Dialogue (wilds_battle_trigger → end)
+    → BattleScreen (formation: wilds_crawlers or wilds_mixed)
+      → Victory → +2 Monomate reward
+        → Dialogue (wilds_cleared → end)    sets wilds_cleared
+        → Overworld
+      → Defeat → Overworld
+
+  → [interact Dezolis Spaceport] (requires wilds_cleared)
+    → Dialogue (spaceport_arrival → end)    sets spaceport_entered
+    → Dialogue (spaceport_boss_trigger → end)
+    → BattleScreen (formation: warden, boss=true)
+      → Victory → Dialogue (spaceport_victory → act1_finale → end)
+        sets spaceport_cleared
+        → Overworld
+      → Defeat → Overworld
 ```
 
 ### Re-entry states
 
 - `intro_seen=true, ariel_found=false` → re-enter CrashSiteMapScreen (map only, no narration)
 - `ariel_found=true, crash_cleared=false` → skip map, go straight to BattleScreen
-- `crash_cleared=true` → show notification "The wreckage is quiet now."
+- `crash_cleared=true` → crash site shows "The wreckage is quiet now."
+- `wilds_cleared=true` → wilds shows "The path through the wilds is clear."
+- `spaceport_cleared=true` → spaceport shows "The ship is ready. Act 2 awaits..."
 
 ---
 
@@ -60,13 +84,20 @@ Scrolling star field with the Bane shadow in the upper-left and a Dezolis planet
 
 ## Overworld Screen
 
-Two locations on a dark landscape: **Crestfall Village** (left) and **Crash Site** (right).
+Four locations on a dark landscape (left to right):
+
+| Location | Unlock condition | Visual |
+|---|---|---|
+| **Crestfall Village** | Always available | Buildings with warm window lights |
+| **Crash Site** | Always available | Tilted ship hull with amber light |
+| **Dezolis Wilds** | `crash_cleared` flag | Frozen dead trees with ice patches |
+| **Dezolis Spaceport** | `wilds_cleared` flag | Control tower, hangar, antenna dish |
 
 - **◄►** to move the cursor between locations
 - **ENTER/SPACE** to interact
 - **M/ESCAPE** to open the menu
 
-The village always shows a notification ("There's nothing more to do here"). The crash site behaviour is flag-gated (see above). Party HP mini-bars are shown bottom-right.
+Locked locations display `[X]` after their name and show a message explaining the prerequisite. Cleared locations display `*` and show a completion message. Party HP mini-bars are shown bottom-right.
 
 ---
 
@@ -112,9 +143,9 @@ After interaction, movement is locked until the dialogue screen takes over.
 ### Rendering
 
 - Starfield background with a crash site silhouette
-- Character portrait box (64×64, coloured by character): Kael `#c84`, Lyra `#68c`, ARIEL `#4ca`
+- Character portrait box (64×64, coloured by character): Kael `#c84`, Lyra `#68c`, ARIEL `#4ca`, Shadowwarden `#a22`
 - Dialogue box: bottom 160px of canvas
-- Narration lines (no speaker): text in `#8ae`; "title" emotion: centred gold `#fc0`
+- Narration lines (no speaker): text in `#9bf`; "title" emotion: centred gold `#fd2`
 
 ### Typewriter
 
@@ -145,8 +176,15 @@ Characters reveal at 1 per `0.028 s`. Press ENTER/SPACE/Z to skip to end of curr
 | `kael_lyra_01` | Lyra, Kael | Discover the pod. `next: "ariel_awakens"` |
 | `ariel_awakens` | ARIEL, Kael, Lyra | ARIEL wakes. `next: "battle_trigger"` |
 | `battle_trigger` | Kael | Shadowbeasts spotted. Choice: "ENGAGE!" → `"end"` |
-| `post_battle_01` | Kael, ARIEL, Lyra | Post-fight. `next: "tobe_continued"` |
-| `tobe_continued` | Narration | "TO BE CONTINUED". `next: "end"` |
+| `post_battle_01` | Kael, ARIEL, Lyra | Post-fight. `next: "crash_site_resolved"` |
+| `crash_site_resolved` | Narration | Hints at Dezolis Wilds; `next: "end"` |
+| `wilds_approach` | Kael, ARIEL, Lyra | Enter the Dezolis Wilds. `next: "end"` |
+| `wilds_battle_trigger` | ARIEL, Kael | Enemies emerge from permafrost. Choice: "Fight through!" → `"end"` |
+| `wilds_cleared` | Lyra, ARIEL, Kael | Wilds battle won; spaceport sighted. `next: "end"` |
+| `spaceport_arrival` | ARIEL, Kael, Lyra | Explore the abandoned spaceport. `next: "end"` |
+| `spaceport_boss_trigger` | Narration, Shadowwarden, Lyra, Kael | Shadowwarden appears. Choice: "Stand your ground!" → `"end"` |
+| `spaceport_victory` | Narration, Lyra, ARIEL, Kael | Boss defeated; Landale ship found. `next: "act1_finale"` |
+| `act1_finale` | Narration | Party leaves Dezolis; the Bane watches. `next: "end"` |
 | `end` | — | Empty lines; always calls `onComplete` immediately |
 
 ---
@@ -255,6 +293,8 @@ ARIEL is a pre-Collapse CAST android found in the stasis pod. All three start at
 | Shadowpup | 18 | 8 | 4 | 12 | 12 | 5 | — | FOI |
 | Shadowhound | 35 | 13 | 7 | 8 | 28 | 14 | — | FOI |
 | Shadowwarden | 80 | 18 | 10 | 6 | 120 | 60 | DARK_BOLT | RAY |
+| Ice Crawler | 28 | 11 | 8 | 7 | 22 | 10 | — | FOI |
+| Void Stalker | 40 | 15 | 6 | 14 | 35 | 18 | DARK_BOLT | RAY |
 
 ### Formations
 
@@ -262,7 +302,10 @@ ARIEL is a pre-Collapse CAST android found in the stasis pod. All three start at
 |---|---|---|---|
 | `pack` | 3× Shadowpup | No | Crash Site first/retry battle |
 | `patrol` | 1× Shadowhound + 1× Shadowpup | No | (unused in demo) |
-| `warden` | 1× Shadowwarden | Yes | (unused in demo) |
+| `warden` | 1× Shadowwarden | Yes | Spaceport boss fight |
+| `wilds_crawlers` | 2× Ice Crawler | No | Dezolis Wilds battle (alternating) |
+| `wilds_mixed` | 1× Ice Crawler + 1× Shadowhound | No | Dezolis Wilds battle (alternating) |
+| `stalker_ambush` | 2× Void Stalker | No | (unused in demo) |
 
 ---
 
@@ -275,17 +318,28 @@ ARIEL is a pre-Collapse CAST android found in the stasis pod. All three start at
 | `trimate` | Trimate | consumable | heal_hp 999, single | 350 |
 | `moon_atomizer` | Moon Atomizer | consumable | cure_status 30%, single (revive) | 300 |
 | `antidote` | Antidote | consumable | cure_status 0 (poison cure) | 30 |
+| `star_atomizer` | Star Atomizer | consumable | heal_hp 30, party | 500 |
+| `telepipe` | Telepipe | consumable | (not yet functional) | 200 |
 | `photon_blade` | Photon Blade | weapon | ATK +8 | 500 |
 | `force_staff` | Force Staff | weapon | ATK +4 | 350 |
+| `photon_arm` | Photon Arm | weapon | ATK +6 | 450 |
 | `leather_vest` | Leather Vest | armor | DEF +5 | 200 |
+| `cast_frame` | CAST Frame | armor | DEF +7 | 400 |
 | `barrier_shield` | Barrier Shield | shield | DEF +4 | 250 |
 
 ### Starting inventory
 
 ```
-Monomate × 3
-Dimate   × 1
+Monomate       × 5
+Dimate         × 2
+Moon Atomizer  × 1
 ```
+
+### In-game rewards
+
+- Crash Site victory: full HP/TP restore
+- Wilds victory: full HP/TP restore + 2 Monomate
+- Spaceport victory: (final battle — no restore needed)
 
 ---
 
@@ -297,4 +351,4 @@ Dimate   × 1
 | Act 2 | The Void Between Worlds | Planned |
 | Act 3 | Light of the Archive | Planned |
 
-**Act 1 premise:** On dying planet Dezolis, year 1157 Post-Collapse, hunters Kael and Lyra discover a crashed starship. Inside: a CAST android named ARIEL, dormant for 412 years. ARIEL carries coordinates to the Stellar Archive — pre-Collapse data that contains a weapon capable of destroying the Bane, the cosmic darkness devouring the stars. After fighting off Shadowbeasts, the party resolves to find a ship and reach Motavia.
+**Act 1 premise:** On dying planet Dezolis, year 1157 Post-Collapse, hunters Kael and Lyra discover a crashed starship. Inside: a CAST android named ARIEL, dormant for 412 years. ARIEL carries coordinates to the Stellar Archive — pre-Collapse data that contains a weapon capable of destroying the Bane, the cosmic darkness devouring the stars. After fighting off Shadowbeasts at the crash site, the party crosses the dangerous Dezolis Wilds, battles through hostile creatures emerging from the permafrost, and reaches the abandoned Dezolis Spaceport. There they confront a Shadowwarden — a general of the Bane's host — guarding the facility. After defeating it, ARIEL discovers a pre-Collapse Landale-class courier ship and brings it online. The party departs Dezolis for Motavia and the Stellar Archive.
