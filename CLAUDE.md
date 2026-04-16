@@ -72,3 +72,22 @@ This project uses an agent team with four specialized roles:
 - Every system should have corresponding tests in `src/tests/`
 - Use descriptive names: `calculatePhysicalDamage()` not `calcDmg()`
 - Document complex formulas and game mechanics inline
+
+## Documentation
+
+The `docs/` folder contains the living reference for this project. Every agent **must** keep it current — stale docs are treated as a bug.
+
+### Files
+
+| File | Update when |
+|---|---|
+| `docs/architecture.md` | Engine internals change: new screen added to registry, GameContext fields added/removed, InputManager behaviour changes, new UI primitive, conventions change |
+| `docs/gameplay.md` | Any change to: game flow or flag logic, screen controls, dialogue nodes, battle states/formulas, character/enemy/item data, starting inventory |
+| `docs/known-issues.md` | A known bug is fixed (remove or mark resolved); a new confirmed bug is deferred; a missing system is implemented |
+| `README.md` | New commands, new demo content, project structure changes, new docs added |
+
+### Rule
+
+After completing any task that changes game behaviour, data, or engine structure, update the relevant doc(s) in the same work unit — not as a follow-up. A PR or changeset that touches code without updating affected docs is incomplete.
+
+When a doc entry conflicts with the current code, **trust the code** and correct the doc.
