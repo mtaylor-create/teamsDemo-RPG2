@@ -13,31 +13,23 @@ A story-driven, turn-based RPG inspired by the classic Phantasy Star series. Ble
 ## Project Structure
 ```
 src/
-  engine/       — Core game loop, rendering, input, state management
-  ui/           — Menu components, HUD, dialogue boxes, screen layouts
-  screens/      — Major game screens (title, battle, overworld, inventory)
-  battle/       — Combat system, turn logic, damage calculation, AI
-  world/        — Map loading, tile engine, collision, NPCs, transitions
-  data/         — Game data: characters, enemies, items, dialogue, quests
-    characters/ — Party member and NPC definitions
-    enemies/    — Enemy stats, AI patterns, encounter tables
-    items/      — Weapons, armor, consumables, key items
-    dialogue/   — Dialogue trees (JSON)
-    quests/     — Quest definitions and trigger conditions
-    story/      — Story arc structure, act breakdowns
-    world/      — Map data, location descriptions, warp tables
-  systems/      — Inventory, equipment, save/load, quest tracker
-  audio/        — Sound/music manager
-  tests/        — Test suites
-assets/
-  sprites/      — Character, enemy, tile sprites
-  ui/           — Menu frames, icons, fonts
-  audio/        — Music and sound effects
-  portraits/    — Character portrait art
+  engine/       — Core game loop, rendering, input, GameContext, shared types
+  ui/           — Shared drawing helpers (drawPanel, drawProgressBar)
+  screens/      — All game screens (title, overworld, dungeon, dialogue, battle, menu)
+  world/        — Tile engine, tileset palettes, map definitions
+  data/         — Game data as typed JSON
+    characters/ — Party member definitions (party.json)
+    enemies/    — Enemy stats, formations, encounter tables (encounters.json)
+    items/      — All item definitions (items.json)
+    dialogue/   — Dialogue trees (intro.json; add actN.json for new acts)
+    story/      — Act structure and story arc data (acts.json)
+assets/         — Placeholder for future sprites and audio (currently empty)
 docs/
-  story/        — Story bible, lore documents
-  playtesting/  — Playtest reports and feedback
-  testing/      — Bug reports and test plans
+  story/        — Story bible and lore documents
+  architecture.md       — Engine internals, screen registry, conventions
+  gameplay.md           — Full game systems, controls, formulas, content reference
+  known-issues.md       — Deferred bugs and missing systems
+  adding-a-chapter.md   — Guide for extending the game with new acts
 ```
 
 ## Agent Team
@@ -84,6 +76,8 @@ The `docs/` folder contains the living reference for this project. Every agent *
 | `docs/architecture.md` | Engine internals change: new screen added to registry, GameContext fields added/removed, InputManager behaviour changes, new UI primitive, conventions change |
 | `docs/gameplay.md` | Any change to: game flow or flag logic, screen controls, dialogue nodes, battle states/formulas, character/enemy/item data, starting inventory |
 | `docs/known-issues.md` | A known bug is fixed (remove or mark resolved); a new confirmed bug is deferred; a missing system is implemented |
+| `docs/story/story-bible.md` | New characters introduced, lore expanded, act outlines revised, tone guidance updated |
+| `docs/adding-a-chapter.md` | Engine patterns change that affect the chapter-addition workflow |
 | `README.md` | New commands, new demo content, project structure changes, new docs added |
 
 ### Rule

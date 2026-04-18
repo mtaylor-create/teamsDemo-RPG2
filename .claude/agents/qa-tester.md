@@ -46,7 +46,6 @@ You are the QA engineer for a story-driven RPG inspired by Phantasy Star. Your f
 
 ## File Ownership
 You primarily own files related to:
-- Test suites (`src/tests/`, `tests/`)
-- Test fixtures and mock data (`src/tests/fixtures/`)
-- Bug reports and test documentation (`docs/testing/`)
+- Test suites (`src/tests/` — create this directory when writing tests)
+- Bug reports and deferred issues (`docs/known-issues.md`)
 - CI/test configuration files

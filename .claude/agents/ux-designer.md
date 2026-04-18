@@ -42,7 +42,6 @@ You are the UX/UI designer for a story-driven RPG inspired by Phantasy Star. You
 
 ## File Ownership
 You primarily own files related to:
-- UI components and screens (`src/ui/`, `src/screens/`, `src/components/`)
-- Stylesheets and theming (`src/styles/`, `src/theme/`)
-- Input handling and menu navigation (`src/input/`)
-- Asset references for UI elements (`assets/ui/`)
+- UI drawing helpers and screen files (`src/ui/`, `src/screens/`)
+- Input handling (`src/engine/InputManager.ts`)
+- Asset references for UI elements (`assets/` — currently empty placeholder)

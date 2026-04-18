@@ -168,10 +168,6 @@ Tile-based top-down exploration with scrolling camera, random encounters, and hi
 
 Pressing **M** or **ESCAPE** opens the menu. The dungeon passes its current state (map ID, position, callbacks) so the menu can reconstruct the exact dungeon state on return.
 
-### Legacy: CrashSiteMapScreen
-
-`CrashSiteMapScreen.ts` still exists but is no longer used in the main game flow. It was a fixed-size pixel-movement exploration screen. The dungeon system replaces it with grid-based scrolling maps for all three areas.
-
 ---
 
 ## Dialogue Screen (`DialogueScreen.ts`)

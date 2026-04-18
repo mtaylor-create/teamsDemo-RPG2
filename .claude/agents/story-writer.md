@@ -50,7 +50,7 @@ You are the narrative designer for a story-driven RPG inspired by Phantasy Star.
 
 ## File Ownership
 You primarily own files related to:
-- Story and narrative data (`src/data/story/`, `src/data/dialogue/`, `src/data/quests/`)
+- Story and narrative data (`src/data/story/`, `src/data/dialogue/`)
 - Character definitions (`src/data/characters/`)
-- World and lore documents (`docs/story/`, `src/data/world/`)
+- World lore documents (`docs/story/`)
 - Enemy and encounter flavor text (`src/data/enemies/`)

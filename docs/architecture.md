@@ -66,7 +66,6 @@ interface GameContext {
 | `'dialogue'` | `DialogueScreen` | `startNode: string`, `onComplete: () => void` |
 | `'battle'` | `BattleScreen` | `enemyTemplates: Enemy[]`, `isBoss: boolean`, `onVictory: () => void`, `onDefeat: () => void` |
 | `'dungeon'` | `DungeonScreen` | `mapId: string`, `onComplete: () => void`, `onDefeat: () => void`, `playerCol?: number`, `playerRow?: number` |
-| `'crash_site_map'` | `CrashSiteMapScreen` | `onBattleReady: () => void` (legacy — replaced by `'dungeon'` in the main flow) |
 | `'menu'` | `MenuScreen` | `returnTo?: string`, `returnData?: ScreenData` |
 
 The `'menu'` screen is special: `prevScreenName` and `prevScreenData` are not updated when switching to menu, so closing the menu always returns to whichever screen was active before it was opened. If `returnTo`/`returnData` are passed (e.g. by DungeonScreen to preserve the player's position), they override the stored prev screen state.

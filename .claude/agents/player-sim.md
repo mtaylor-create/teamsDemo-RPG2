@@ -78,7 +78,5 @@ For each feature, screen, or gameplay segment you review:
 
 ## File Ownership
 You primarily own files related to:
-- Playtest reports and feedback (`docs/playtesting/`)
-- Player archetype definitions (`docs/playtesting/archetypes/`)
-- UX audit documents (`docs/playtesting/ux-audits/`)
-- Feedback summaries and priority lists (`docs/playtesting/summaries/`)
+- Playtest reports and feedback (`docs/playtesting/` — create this directory when writing reports)
+- UX audit documents and feedback summaries

@@ -45,7 +45,6 @@ src/
     TitleScreen.ts    — Scrolling star field, press ENTER
     OverworldScreen.ts — Four-location map; manages all game progression flags
     DungeonScreen.ts  — Tile-based dungeon exploration with scrolling, encounters, treasures
-    CrashSiteMapScreen.ts — (Legacy) top-down pixel-movement area
     DialogueScreen.ts — Typewriter dialogue with portraits and choices
     BattleScreen.ts   — Full turn-based combat
     MenuScreen.ts     — Status / Items / Equip tabs; out-of-combat item use
@@ -90,5 +89,7 @@ Four specialist agents assist with development. See [CLAUDE.md](CLAUDE.md) for t
 | [docs/architecture.md](docs/architecture.md) | Engine internals, screen registry, InputManager, GameContext, UI primitives |
 | [docs/gameplay.md](docs/gameplay.md) | Full game flow, all systems and controls, characters, items, formulas |
 | [docs/known-issues.md](docs/known-issues.md) | Open bugs, deferred work, missing systems |
+| [docs/story/story-bible.md](docs/story/story-bible.md) | World lore, characters, act outlines, tone guide |
+| [docs/adding-a-chapter.md](docs/adding-a-chapter.md) | Step-by-step guide for extending the game with new acts |
 
 **Keep docs current.** Any change to a system's behaviour, controls, data shape, or game flow must be reflected in the relevant doc before the work is considered complete. See [CLAUDE.md](CLAUDE.md) for the documentation maintenance rule.

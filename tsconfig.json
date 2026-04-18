@@ -16,10 +16,8 @@
     "paths": {
       "@engine/*": ["src/engine/*"],
       "@ui/*": ["src/ui/*"],
-      "@battle/*": ["src/battle/*"],
       "@world/*": ["src/world/*"],
-      "@data/*": ["src/data/*"],
-      "@systems/*": ["src/systems/*"]
+      "@data/*": ["src/data/*"]
     }
   },
   "include": ["src/**/*.ts"],
