@@ -14,6 +14,7 @@ import { BattleScreen } from '../screens/BattleScreen.ts';
 import { OverworldScreen } from '../screens/OverworldScreen.ts';
 import { MenuScreen } from '../screens/MenuScreen.ts';
 import { CrashSiteMapScreen } from '../screens/CrashSiteMapScreen.ts';
+import { DungeonScreen } from '../screens/DungeonScreen.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ScreenData = Record<string, any>;
@@ -52,6 +53,7 @@ export class Game {
   private lastTime = 0;
   private gctx!: GameContext;
   private prevScreenName = 'title';
+  private prevScreenData: ScreenData = {};
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -101,7 +103,10 @@ export class Game {
   }
 
   private switchScreen(name: string, data: ScreenData = {}): void {
-    this.prevScreenName = name === 'menu' ? this.prevScreenName : name;
+    if (name !== 'menu') {
+      this.prevScreenName = name;
+      this.prevScreenData = data;
+    }
 
     switch (name) {
       // ── Title ────────────────────────────────────────────────────────────
@@ -144,13 +149,33 @@ export class Game {
         break;
       }
 
+      // ── Dungeon (tile-based exploration) ──────────────────────────────────
+      case 'dungeon': {
+        const mapId      = (data['mapId']      as string)     ?? 'crash_site';
+        const onComplete = (data['onComplete'] as () => void) ?? (() => this.switchScreen('overworld'));
+        const onDefeat   = (data['onDefeat']   as () => void) ?? (() => this.switchScreen('overworld'));
+        const playerCol  = data['playerCol'] as number | undefined;
+        const playerRow  = data['playerRow'] as number | undefined;
+        this.screen = new DungeonScreen(this.gctx, mapId, onComplete, onDefeat, playerCol, playerRow);
+        break;
+      }
+
       // ── Menu (overlay — returns to previous screen) ──────────────────────
-      case 'menu':
+      case 'menu': {
+        // If the caller provides explicit return info (e.g., dungeon with position),
+        // store it so the menu returns to the right state.
+        const returnTo   = data['returnTo']   as string     | undefined;
+        const returnData = data['returnData'] as ScreenData | undefined;
+        if (returnTo && returnData) {
+          this.prevScreenName = returnTo;
+          this.prevScreenData = returnData;
+        }
         this.screen = new MenuScreen(
           this.gctx,
-          () => this.switchScreen(this.prevScreenName)
+          () => this.switchScreen(this.prevScreenName, this.prevScreenData)
         );
         break;
+      }
 
       default:
         console.warn(`Unknown screen: ${name}`);

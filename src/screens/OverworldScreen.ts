@@ -82,11 +82,11 @@ export class OverworldScreen {
           startNode: 'scene_start',
           onComplete: () => {
             this.gctx.flags['intro_seen'] = true;
-            this.startCrashSiteMap();
+            this.enterDungeon('crash_site');
           },
         });
       } else {
-        this.startCrashSiteMap();
+        this.enterDungeon('crash_site');
       }
       return;
     }
@@ -106,14 +106,11 @@ export class OverworldScreen {
           startNode: 'wilds_approach',
           onComplete: () => {
             this.gctx.flags['wilds_entered'] = true;
-            this.gctx.switchScreen('dialogue', {
-              startNode: 'wilds_battle_trigger',
-              onComplete: () => this.startWildsBattle(),
-            });
+            this.enterDungeon('wilds');
           },
         });
       } else {
-        this.startWildsBattle();
+        this.enterDungeon('wilds');
       }
       return;
     }
@@ -133,29 +130,64 @@ export class OverworldScreen {
           startNode: 'spaceport_arrival',
           onComplete: () => {
             this.gctx.flags['spaceport_entered'] = true;
-            this.gctx.switchScreen('dialogue', {
-              startNode: 'spaceport_boss_trigger',
-              onComplete: () => this.startSpaceportBoss(),
-            });
+            this.enterDungeon('spaceport');
           },
         });
       } else {
-        this.startSpaceportBoss();
+        this.enterDungeon('spaceport');
       }
       return;
     }
   }
 
-  private startCrashSiteMap(): void {
-    this.gctx.switchScreen('crash_site_map', {
-      onBattleReady: () => {
-        this.gctx.flags['ariel_found'] = true;
-        this.startCrashBattle();
-      },
+  // ── Dungeon entry helpers ───────────────────────────────────────────────
+
+  /**
+   * Enter a tile-based dungeon. When the player reaches the objective tile,
+   * the appropriate dialogue + battle sequence fires.
+   */
+  private enterDungeon(mapId: string): void {
+    this.gctx.switchScreen('dungeon', {
+      mapId,
+      onComplete: () => this.onDungeonComplete(mapId),
+      onDefeat: () => this.gctx.switchScreen('overworld'),
     });
   }
 
-  /** Restore party HP/TP after a zone is cleared (rest between encounters) */
+  /** Fired when the player reaches a dungeon's objective tile. */
+  private onDungeonComplete(mapId: string): void {
+    switch (mapId) {
+      case 'crash_site':
+        // Found the stasis pod → dialogue → battle
+        this.gctx.flags['ariel_found'] = true;
+        this.gctx.switchScreen('dialogue', {
+          startNode: 'kael_lyra_01',
+          onComplete: () => this.startCrashBattle(),
+        });
+        break;
+
+      case 'wilds':
+        // Reached the far side → battle trigger dialogue → battle
+        this.gctx.switchScreen('dialogue', {
+          startNode: 'wilds_battle_trigger',
+          onComplete: () => this.startWildsBattle(),
+        });
+        break;
+
+      case 'spaceport':
+        // Reached the hangar → boss trigger dialogue → boss battle
+        this.gctx.switchScreen('dialogue', {
+          startNode: 'spaceport_boss_trigger',
+          onComplete: () => this.startSpaceportBoss(),
+        });
+        break;
+
+      default:
+        this.gctx.switchScreen('overworld');
+    }
+  }
+
+  /** Restore party HP/TP after a zone is cleared */
   private restoreParty(): void {
     for (const c of this.gctx.party) {
       c.hp = c.maxHp;
@@ -182,7 +214,6 @@ export class OverworldScreen {
   }
 
   private startWildsBattle(): void {
-    // Use current formation; toggle only on victory so retries keep the same difficulty
     const formId = this.gctx.flags['wilds_fight_alt'] ? 'wilds_mixed' : 'wilds_crawlers';
     const formation = this.gctx.formations.find(f => f.id === formId);
     const enemyTemplates = (formation?.enemyIds ?? []).map(id => this.gctx.allEnemies[id]).filter(Boolean);
@@ -193,7 +224,6 @@ export class OverworldScreen {
         this.gctx.flags['wilds_cleared'] = true;
         this.gctx.flags['wilds_fight_alt'] = !this.gctx.flags['wilds_fight_alt'];
         this.restoreParty();
-        // Give the party a Monomate reward
         const existing = this.gctx.inventory.find(s => s.itemId === 'monomate');
         if (existing) existing.quantity += 2;
         else this.gctx.inventory.push({ itemId: 'monomate', quantity: 2 });

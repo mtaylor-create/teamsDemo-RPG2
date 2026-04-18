@@ -65,10 +65,11 @@ interface GameContext {
 | `'overworld'` | `OverworldScreen` | — |
 | `'dialogue'` | `DialogueScreen` | `startNode: string`, `onComplete: () => void` |
 | `'battle'` | `BattleScreen` | `enemyTemplates: Enemy[]`, `isBoss: boolean`, `onVictory: () => void`, `onDefeat: () => void` |
-| `'crash_site_map'` | `CrashSiteMapScreen` | `onBattleReady: () => void` |
-| `'menu'` | `MenuScreen` | — (returns to `prevScreenName` on close) |
+| `'dungeon'` | `DungeonScreen` | `mapId: string`, `onComplete: () => void`, `onDefeat: () => void`, `playerCol?: number`, `playerRow?: number` |
+| `'crash_site_map'` | `CrashSiteMapScreen` | `onBattleReady: () => void` (legacy — replaced by `'dungeon'` in the main flow) |
+| `'menu'` | `MenuScreen` | `returnTo?: string`, `returnData?: ScreenData` |
 
-The `'menu'` screen is special: `prevScreenName` is not updated when switching to menu, so closing the menu always returns to whichever screen was active before it was opened.
+The `'menu'` screen is special: `prevScreenName` and `prevScreenData` are not updated when switching to menu, so closing the menu always returns to whichever screen was active before it was opened. If `returnTo`/`returnData` are passed (e.g. by DungeonScreen to preserve the player's position), they override the stored prev screen state.
 
 **Adding a new screen:** add a `case` to the switch in `Game.ts`, import the class, and register the name here.
 
@@ -102,6 +103,50 @@ import itemsDataRaw      from '../data/items/items.json';
 ## Type system (`src/engine/types.ts`)
 
 Core interfaces: `Character`, `Enemy`, `Item`, `ItemEffect`, `DialogueNode`, `DialogueChoice`, `InventorySlot`, `Equipment`, `Quest`, `SaveData`. See the file for full field lists. All game data files are typed against these interfaces.
+
+## Tile engine (`src/world/TileEngine.ts`)
+
+The tile-based dungeon system renders exploration areas on a grid of 32×32 pixel tiles. The visible viewport is 20×15 tiles (640×480 canvas).
+
+### Tile types
+
+| Tile | Value | Solid? | Description |
+|---|---|---|---|
+| VOID | 0 | Yes | Empty space outside map |
+| FLOOR | 1 | No | Base walkable tile |
+| WALL | 2 | Yes | Brick-pattern wall with cap and shadow |
+| FLOOR_ALT | 3 | No | Alternate floor (used for objective areas) |
+| PILLAR | 4 | Yes | Column on floor (blocks movement) |
+| DEBRIS | 5 | No | Scattered fragments on floor |
+| CHEST | 6 | No | Treasure chest (opens when collected) |
+| OBJECTIVE | 7 | No | Mission target with pulsing ring marker |
+
+### Tilesets
+
+Three palettes: `'stone'` (crash site), `'ice'` (wilds), `'metal'` (spaceport). Each defines colours for floor, wall, pillar, debris, chest, and void tiles.
+
+### Key exports
+
+- `TILE_SIZE = 32`, `VIEW_COLS = 20`, `VIEW_ROWS = 15`
+- `isSolid(tile)` — returns true for VOID, WALL, PILLAR
+- `renderTile(ctx, tile, tileset, px, py, time, chestOpened?)` — draws one tile
+- `renderPlayer(ctx, px, py, facing, time, walking)` — draws the player sprite
+
+## Map definitions (`src/world/maps.ts`)
+
+Maps are defined as string arrays (one char per tile) with metadata for objectives, treasures, and encounters. All rows must be the same width (validated at import time in dev mode).
+
+### Map data
+
+| Map ID | Tileset | Size | Encounter formations | Encounter rate |
+|---|---|---|---|---|
+| `crash_site` | stone | 28×20 | pack, patrol | 12–20 steps |
+| `wilds` | ice | 28×25 | wilds_crawlers, wilds_mixed, stalker_ambush | 10–18 steps |
+| `spaceport` | metal | 28×28 | stalker_ambush, wilds_mixed | 8–15 steps |
+
+### Treasure locations
+
+Treasures are flag-gated: once collected, the flag is set in `gctx.flags` and the chest renders as opened. Items are added to `gctx.inventory`.
 
 ## UI primitives (`src/ui/`)
 

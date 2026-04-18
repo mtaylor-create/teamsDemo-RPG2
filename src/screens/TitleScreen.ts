@@ -135,6 +135,6 @@ export class TitleScreen {
     ctx.fillStyle = 'rgba(100,150,200,0.6)';
     ctx.font = '10px monospace';
     ctx.textAlign = 'right';
-    ctx.fillText('DEMO v0.2', width - 8, height - 6);
+    ctx.fillText('DEMO v0.3', width - 8, height - 6);
   }
 }

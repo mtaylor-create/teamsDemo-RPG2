@@ -14,22 +14,24 @@ npm run test:run  # run once (CI mode)
 
 Open the URL in a browser. The game renders on a single `640×480` canvas element.
 
-## What's playable now (Demo v0.2)
+## What's playable now (Demo v0.3)
 
-The demo covers **Act 1: Echoes of the Fallen Star** — from discovering ARIEL at the crash site to departing Dezolis aboard a pre-Collapse ship. The complete playable sequence:
+The demo covers **Act 1: Echoes of the Fallen Star** — from discovering ARIEL at the crash site to departing Dezolis aboard a pre-Collapse ship. All three areas feature tile-based dungeon exploration with scrolling maps, random encounters, and hidden treasure chests.
 
 1. **Title screen** — ENTER to start
 2. **Overworld** — navigate left/right between four locations
-3. **Crash Site** → **Dialogue** (two-line narration sets the scene)
-4. **Crash Site Map** — top-down exploration; walk to the stasis pod to trigger contact
-5. **Dialogue** — Kael and Lyra find ARIEL; ARIEL joins the party
+3. **Crash Site** → **Dialogue** (narration sets the scene)
+4. **Dungeon** — tile-based maze exploration (stone tileset); random encounters with Shadowpups; hidden treasures
+5. **Reach objective** → **Dialogue** — Kael and Lyra find ARIEL; ARIEL joins the party
 6. **Battle** — first encounter with a pack of Shadowpups
 7. **Victory Dialogue** — party resolves to find a ship
-8. **Dezolis Wilds** (unlocked) → **Dialogue** → **Battle** with Ice Crawlers / Shadowhounds
-9. **Victory Dialogue** — party spots the spaceport
-10. **Dezolis Spaceport** (unlocked) → **Dialogue** → **Boss Battle** with the Shadowwarden
-11. **Victory Dialogue** — ARIEL finds a Landale-class ship; party departs Dezolis
-12. **Act 1 Finale** — narration: "To be continued in Act 2"
+8. **Dezolis Wilds** (unlocked) → **Dialogue** → **Dungeon** (ice tileset); random encounters with Ice Crawlers, Shadowhounds, Void Stalkers; hidden treasures
+9. **Reach objective** → **Battle** with Ice Crawlers / Shadowhounds
+10. **Victory Dialogue** — party spots the spaceport
+11. **Dezolis Spaceport** (unlocked) → **Dialogue** → **Dungeon** (metal tileset); random encounters; hidden treasures
+12. **Reach objective** → **Boss Battle** with the Shadowwarden
+13. **Victory Dialogue** — ARIEL finds a Landale-class ship; party departs Dezolis
+14. **Act 1 Finale** — narration: "To be continued in Act 2"
 
 ## Project structure
 
@@ -41,11 +43,15 @@ src/
     types.ts          — Shared TypeScript interfaces
   screens/
     TitleScreen.ts    — Scrolling star field, press ENTER
-    OverworldScreen.ts — Two-location map; manages all crash site flags
-    CrashSiteMapScreen.ts — Top-down walkable area; player finds ARIEL
+    OverworldScreen.ts — Four-location map; manages all game progression flags
+    DungeonScreen.ts  — Tile-based dungeon exploration with scrolling, encounters, treasures
+    CrashSiteMapScreen.ts — (Legacy) top-down pixel-movement area
     DialogueScreen.ts — Typewriter dialogue with portraits and choices
     BattleScreen.ts   — Full turn-based combat
     MenuScreen.ts     — Status / Items / Equip tabs; out-of-combat item use
+  world/
+    TileEngine.ts     — Tile definitions, tileset palettes, procedural tile rendering
+    maps.ts           — Map layouts for crash site, wilds, spaceport (28×20–28 grids)
   ui/
     Panel.ts          — drawPanel() — retro sci-fi bordered box
     ProgressBar.ts    — drawProgressBar() — HP/TP bars with colour shift

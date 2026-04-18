@@ -17,6 +17,12 @@ The demo follows a linear sequence gated by flags in `gctx.flags`:
 | `wilds_cleared` | Wilds battle victory dialogue completes | Wilds shows cleared state; unlocks Spaceport |
 | `spaceport_entered` | First spaceport arrival dialogue completes | Skips arrival dialogue on re-entry |
 | `spaceport_cleared` | Spaceport boss victory dialogue completes | Spaceport shows cleared state; Act 1 complete |
+| `chest_crash_1` | Collect treasure chest in crash site | Chest renders as opened (2× Monomate) |
+| `chest_crash_2` | Collect treasure chest in crash site | Chest renders as opened (1× Antidote) |
+| `chest_wilds_1` | Collect treasure chest in wilds | Chest renders as opened (1× Dimate) |
+| `chest_wilds_2` | Collect treasure chest in wilds | Chest renders as opened (1× Star Atomizer) |
+| `chest_port_1` | Collect treasure chest in spaceport | Chest renders as opened (1× Moon Atomizer) |
+| `chest_port_2` | Collect treasure chest in spaceport | Chest renders as opened (1× Trimate) |
 
 ### Full sequence (no flags set)
 
@@ -24,41 +30,53 @@ The demo follows a linear sequence gated by flags in `gctx.flags`:
 Title → Overworld (4 locations)
   → [interact Crash Site]
     → Dialogue (scene_start → end)          sets intro_seen
-    → CrashSiteMapScreen
-      → [interact with pod]
+    → DungeonScreen (crash_site map)
+      → [random encounters with pack/patrol formations while exploring]
+      → [hidden treasures: 2× Monomate, 1× Antidote]
+      → [reach objective]
         → Dialogue (kael_lyra_01 → ariel_awakens → battle_trigger → end)
           sets ariel_found, triggers battle
         → BattleScreen (formation: pack)
-          → Victory → Dialogue (post_battle_01 → tobe_continued → end)
-            sets crash_cleared
+          → Victory → Dialogue (post_battle_01 → crash_site_resolved → end)
+            sets crash_cleared, full HP/TP restore
             → Overworld
           → Defeat → Overworld
 
   → [interact Dezolis Wilds] (requires crash_cleared)
     → Dialogue (wilds_approach → end)       sets wilds_entered
-    → Dialogue (wilds_battle_trigger → end)
-    → BattleScreen (formation: wilds_crawlers or wilds_mixed)
-      → Victory → +2 Monomate reward
-        → Dialogue (wilds_cleared → end)    sets wilds_cleared
-        → Overworld
-      → Defeat → Overworld
+    → DungeonScreen (wilds map)
+      → [random encounters with wilds_crawlers/wilds_mixed/stalker_ambush]
+      → [hidden treasures: 1× Dimate, 1× Star Atomizer]
+      → [reach objective]
+        → Dialogue (wilds_battle_trigger → end)
+        → BattleScreen (formation: wilds_crawlers or wilds_mixed)
+          → Victory → +2 Monomate reward, full HP/TP restore
+            → Dialogue (wilds_cleared → end)    sets wilds_cleared
+            → Overworld
+          → Defeat → Overworld
 
   → [interact Dezolis Spaceport] (requires wilds_cleared)
     → Dialogue (spaceport_arrival → end)    sets spaceport_entered
-    → Dialogue (spaceport_boss_trigger → end)
-    → BattleScreen (formation: warden, boss=true)
-      → Victory → Dialogue (spaceport_victory → act1_finale → end)
-        sets spaceport_cleared
-        → Overworld
-      → Defeat → Overworld
+    → DungeonScreen (spaceport map)
+      → [random encounters with stalker_ambush/wilds_mixed]
+      → [hidden treasures: 1× Moon Atomizer, 1× Trimate]
+      → [reach objective]
+        → Dialogue (spaceport_boss_trigger → end)
+        → BattleScreen (formation: warden, boss=true)
+          → Victory → Dialogue (spaceport_victory → act1_finale → end)
+            sets spaceport_cleared
+            → Overworld
+          → Defeat → Overworld
 ```
 
 ### Re-entry states
 
-- `intro_seen=true, ariel_found=false` → re-enter CrashSiteMapScreen (map only, no narration)
-- `ariel_found=true, crash_cleared=false` → skip map, go straight to BattleScreen
+- `intro_seen=true, ariel_found=false` → re-enter DungeonScreen (crash_site map, no narration)
+- `ariel_found=true, crash_cleared=false` → skip dungeon, go straight to BattleScreen
 - `crash_cleared=true` → crash site shows "The wreckage is quiet now."
+- `wilds_entered=true, wilds_cleared=false` → re-enter DungeonScreen (wilds map, no approach dialogue)
 - `wilds_cleared=true` → wilds shows "The path through the wilds is clear."
+- `spaceport_entered=true, spaceport_cleared=false` → re-enter DungeonScreen (spaceport map, no arrival dialogue)
 - `spaceport_cleared=true` → spaceport shows "The ship is ready. Act 2 awaits..."
 
 ---
@@ -101,40 +119,58 @@ Locked locations display `[X]` after their name and show a message explaining th
 
 ---
 
-## Crash Site Map Screen (`CrashSiteMapScreen.ts`)
+## Dungeon Screen (`DungeonScreen.ts`)
 
-Top-down exploration area, `640×480`, no scrolling.
+Tile-based top-down exploration with scrolling camera, random encounters, and hidden treasure chests. Replaces the old `CrashSiteMapScreen` for all three Act 1 areas.
 
-### Layout
+### Grid and viewport
 
-- **Sky** (y 0–260): deep space, 90 static stars, crashed ship hull
-- **Ground** (y 260–480): perspective grid, debris fields, player spawn
-- **Ship hull**: painted at canvas centre (translate 355, 148), rotated 0.10 rad. Collision obstacles: `{x:220, y:100, w:260, h:70}` and `{x:255, y:60, w:110, h:50}`
-- **Stasis pod**: top-centre of the sky area at `(322, 195)`, size `44×22`. Pulsing teal glow.
-- **Player spawn**: `(320, 430)` — bottom-centre of ground area
+- **Tile size**: 32×32 pixels
+- **Viewport**: 20×15 tiles (640×480 canvas)
+- **Camera**: follows the player, clamped to map bounds so edges don't show void
+- Maps are defined in `src/world/maps.ts` as string arrays; each character maps to a tile type
 
 ### Player movement
 
-- Speed: 130 px/s
-- Hitbox: 12×12 (half-extent 6)
-- Diagonal movement is normalised (× 0.7071)
-- Vertical bounds: y = 36 to y = 474 (full canvas minus 6px margin — player can walk into the ship area)
-- Horizontal bounds: x = 6 to x = 634
-- Axis-split AABB collision: horizontal move attempted first, then vertical; blocked moves are discarded (slide along walls)
+- Grid-based: one tile per keypress (arrow keys or WASD)
+- Movement between tiles interpolates over ~0.15 seconds (smooth glide)
+- No diagonal movement (one axis at a time)
+- Solid tiles (walls, pillars, void) block movement
 
-### Interaction
+### Random encounters
 
-When the player centre is within **50 px** of the pod centre, the HUD objective changes to "Stasis pod detected" and a blinking `[ ENTER ] Investigate` prompt appears above the pod.
+- A step counter decrements on each tile move
+- When it reaches 0, a random formation is picked from the map's encounter list and a battle begins
+- After battle victory, the player returns to the dungeon at the same position
+- After battle defeat, `onDefeat()` is called (returns to overworld)
+- Step counter resets to a random value in the map's `[min, max]` encounter rate range
 
-Pressing ENTER or SPACE while in range triggers:
-```
-gctx.switchScreen('dialogue', {
-  startNode: 'kael_lyra_01',
-  onComplete: onBattleReady    // provided by OverworldScreen
-})
-```
+### Treasure chests
 
-After interaction, movement is locked until the dialogue screen takes over.
+- Chests are visible on the map as glowing tiles (tile type `T`)
+- Stepping onto an uncollected chest opens it, adds the item to inventory, sets a flag in `gctx.flags`, and shows a notification
+- Already-collected chests render as opened (dark interior)
+- Treasure does not trigger an encounter step
+
+### Objective
+
+- Each map has a single objective tile (type `O`, rendered with a pulsing blue ring)
+- Stepping onto the objective calls `onComplete()`, which triggers the area's story sequence
+
+### HUD
+
+- **Top panel**: location name + objective label
+- **Bottom-left**: party HP bars
+- **Bottom-right**: controls hint
+- **Centre**: notification popup for treasure collection (3-second fade)
+
+### Menu access
+
+Pressing **M** or **ESCAPE** opens the menu. The dungeon passes its current state (map ID, position, callbacks) so the menu can reconstruct the exact dungeon state on return.
+
+### Legacy: CrashSiteMapScreen
+
+`CrashSiteMapScreen.ts` still exists but is no longer used in the main game flow. It was a fixed-size pixel-movement exploration screen. The dungeon system replaces it with grid-based scrolling maps for all three areas.
 
 ---
 
@@ -300,12 +336,12 @@ ARIEL is a pre-Collapse CAST android found in the stasis pod. All three start at
 
 | ID | Enemies | Boss? | Used in |
 |---|---|---|---|
-| `pack` | 3× Shadowpup | No | Crash Site first/retry battle |
-| `patrol` | 1× Shadowhound + 1× Shadowpup | No | (unused in demo) |
+| `pack` | 3× Shadowpup | No | Crash Site zone battle + random encounters |
+| `patrol` | 1× Shadowhound + 1× Shadowpup | No | Crash Site random encounters |
 | `warden` | 1× Shadowwarden | Yes | Spaceport boss fight |
-| `wilds_crawlers` | 2× Ice Crawler | No | Dezolis Wilds battle (alternating) |
-| `wilds_mixed` | 1× Ice Crawler + 1× Shadowhound | No | Dezolis Wilds battle (alternating) |
-| `stalker_ambush` | 2× Void Stalker | No | (unused in demo) |
+| `wilds_crawlers` | 2× Ice Crawler | No | Wilds zone battle + random encounters |
+| `wilds_mixed` | 1× Ice Crawler + 1× Shadowhound | No | Wilds zone battle + Spaceport random encounters |
+| `stalker_ambush` | 2× Void Stalker | No | Wilds + Spaceport random encounters |
 
 ---
 
@@ -337,9 +373,15 @@ Moon Atomizer  × 1
 
 ### In-game rewards
 
+**Zone battle rewards:**
 - Crash Site victory: full HP/TP restore
 - Wilds victory: full HP/TP restore + 2 Monomate
 - Spaceport victory: (final battle — no restore needed)
+
+**Dungeon treasure chests:**
+- Crash Site: 2× Monomate, 1× Antidote
+- Dezolis Wilds: 1× Dimate, 1× Star Atomizer
+- Dezolis Spaceport: 1× Moon Atomizer, 1× Trimate
 
 ---
 

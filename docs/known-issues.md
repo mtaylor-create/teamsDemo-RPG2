@@ -63,7 +63,7 @@ Meseta is tracked on enemies but there is no wallet on `GameContext` and no shop
 All enemies and characters are drawn procedurally with canvas primitives. `Enemy.sprite` and `Character.portrait` fields reference asset keys that have no corresponding files yet.
 
 ### Map scrolling / multi-room areas
-`CrashSiteMapScreen` is a single fixed 640×480 screen. Act 2 locations will need a scrolling or room-transition system.
+**Resolved.** `DungeonScreen` with `TileEngine` now provides scrolling tile-based maps for all three Act 1 areas. The old `CrashSiteMapScreen` is still in the codebase but no longer used in the main flow.
 
 ---
 
@@ -72,6 +72,6 @@ All enemies and characters are drawn procedurally with canvas primitives. `Enemy
 - `stateTimer` direction (Bug 14 above)
 - DialogueScreen background is a static silhouette; it does not update to show the current location's actual visual (now has scenes for crash site, wilds, and spaceport but still uses a single crash-site backdrop)
 - BattleScreen enemy positions are computed by index; a formation layout system would improve readability for larger or mixed groups
-- Wilds and Spaceport locations use the overworld interaction flow (dialogue → battle) rather than having dedicated map screens like the crash site
+- ~~Wilds and Spaceport locations use the overworld interaction flow (dialogue → battle) rather than having dedicated map screens like the crash site~~ (resolved — all three areas now use DungeonScreen)
 - Battle technique menu shows TP cost and a brief description, but new players may still find terms like FOI/RES/RAY opaque; a tooltip system could help
 - After defeat the player returns silently to the overworld with no retry prompt or guidance
